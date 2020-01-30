@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
 
 public class TwContext {
 
@@ -61,6 +62,13 @@ public class TwContext {
   }
 
   public TwContext asEntryPoint(@NonNull String group, @NonNull String name) {
+    if (StringUtils.trimToNull(group) == null) {
+      throw new IllegalStateException("Empty group provided.");
+    }
+    if (StringUtils.trimToNull(name) == null) {
+      throw new IllegalStateException("Empty name provided.");
+    }
+
     set(GROUP_KEY, group);
     set(NAME_KEY, name);
     return this;
