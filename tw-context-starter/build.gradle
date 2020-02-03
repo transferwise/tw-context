@@ -1,0 +1,15 @@
+ext.projectName = "Tw Context Starter"
+ext.projectDescription = "Tw Context Starter - Tw Context auto configurator for Spring Boot"
+ext.projectArtifactName = "tw-context-starter"
+
+apply from: '../build.common.gradle'
+
+dependencies {
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation project(":tw-context:")
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-actuator'
+}

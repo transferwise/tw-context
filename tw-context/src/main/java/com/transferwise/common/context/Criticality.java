@@ -11,12 +11,11 @@ public enum Criticality {
   SCHEDDABLE_PLUS,
   SCHEDDABLE;
 
-  private static Map<String, Criticality> nameIndex = Arrays.stream(Criticality.values()).collect(Collectors.toMap(c -> c.name(), c -> c));
+  private static final Map<String, Criticality> nameIndex = Arrays.stream(Criticality.values())
+      .collect(Collectors.toMap(Criticality::name, c -> c));
 
+  @SuppressWarnings("unused")
   public static Criticality findByName(@NonNull String name) {
-    if (name == null) {
-      return null;
-    }
     return nameIndex.get(name.toUpperCase());
   }
 }

@@ -1,0 +1,13 @@
+ext.projectName = "Tw Context"
+ext.projectDescription = "Tw Context - Hierarhical context for carrying over information through threads and even over services calls chains"
+ext.projectArtifactName = "tw-context"
+
+apply from: '../build.common.gradle'
+
+dependencies {
+    implementation("org.apache.commons:commons-lang3")
+    implementation("com.transferwise.common:tw-base-utils:1.2.7")
+    implementation("org.slf4j:slf4j-api")
+
+    api("io.micrometer:micrometer-core")
+}

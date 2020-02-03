@@ -4,7 +4,7 @@ end_of_line = lf
 indent_size = 2
 indent_style = space
 insert_final_newline = false
-max_line_length = 170
+max_line_length = 150
 tab_width = 2
 trim_trailing_whitespace = true
 ij_continuation_indent_size = 4
@@ -1289,7 +1289,7 @@ ij_groovy_while_brace_force = never
 ij_groovy_while_on_new_line = false
 ij_groovy_wrap_long_lines = false
 
-[{*.gradle.kts,*.kts,*.kt}]
+[{*.kts,*.kt}]
 indent_size = 4
 tab_width = 4
 ij_continuation_indent_size = 8
@@ -1748,7 +1748,7 @@ ij_json_spaces_within_braces = false
 ij_json_spaces_within_brackets = false
 ij_json_wrap_long_lines = false
 
-[{pain002ban_0014759778.xml,phpunit.xml.dist,*.jhm,*.xjb,*.rng,*.qrc,*.wsdl,*.wsdd,*.fxml,*.plan,*.bpmn,*.pom,*.xslt,*.jrxml,*.ant,*.xul,*.xsl,*.xsd,*.tld,*.jnlp,*.wadl,*.xml}]
+[{phpunit.xml.dist,*.jhm,*.xjb,*.rng,*.qrc,*.wsdl,*.wsdd,*.fxml,*.plan,*.bpmn,*.pom,*.xslt,*.jrxml,*.ant,*.xul,*.xsl,*.xsd,*.tld,*.jnlp,*.wadl,*.xml}]
 ij_continuation_indent_size = 2
 ij_xml_block_comment_at_first_column = true
 ij_xml_keep_indents_on_empty_lines = false

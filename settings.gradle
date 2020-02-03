@@ -6,3 +6,8 @@ pluginManagement {
         mavenLocal()
     }
 }
+
+include "tw-context"
+include "tw-context-starter"
+
+rootProject.name = "tw-context-root"

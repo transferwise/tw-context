@@ -4,16 +4,18 @@ import static com.transferwise.common.context.UnitOfWork.KEY_CRITICALITY;
 import static com.transferwise.common.context.UnitOfWork.KEY_DEADLINE;
 
 import com.transferwise.common.baseutils.clock.ClockHolder;
-import com.transferwise.common.context.UnitOfWork.Builder;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Metrics;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Supplier;
 
 public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
 
-  private MeterRegistry meterRegistry;
+  private final MeterRegistry meterRegistry;
+
+  public DefaultUnitOfWorkFactory(MeterRegistry meterRegistry) {
+    this.meterRegistry = meterRegistry;
+  }
 
   @Override
   public Builder asEntryPoint(String group, String name) {
@@ -27,13 +29,14 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
 
   protected static class DefaultBuilder implements Builder {
 
-    private MeterRegistry meterRegistry;
-    private String entryPointGroup;
-    private String entryPointName;
+    private final MeterRegistry meterRegistry;
+    private final String entryPointGroup;
+    private final String entryPointName;
     private Instant deadline;
     private Criticality criticality;
 
-    public DefaultBuilder(MeterRegistry meterRegistry, String entryPointGroup, String entryPointName) {
+    public DefaultBuilder(MeterRegistry meterRegistry, String entryPointGroup,
+        String entryPointName) {
       this.meterRegistry = meterRegistry;
       this.entryPointGroup = entryPointGroup;
       this.entryPointName = entryPointName;
@@ -59,8 +62,8 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
 
     @Override
     public TwContext toContext() {
-      TwContext context = TwContext.newSubContext();
-      if (entryPointGroup == null) {
+      TwContext context = TwContext.current().createSubContext();
+      if (entryPointGroup != null) {
         context.setGroup(entryPointGroup);
       }
       if (entryPointName != null) {
@@ -81,18 +84,20 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
         Instant currentDeadline = context.get(KEY_DEADLINE);
         if (currentDeadline != null && currentDeadline.isBefore(deadline)) {
           // Code smell we want to know about.
-          meterRegistry.counter("TwContext.UnitOfWork.DeadlineShrinked", "group", group).increment();
+          meterRegistry.counter("TwContext.UnitOfWork.DeadlineShrinked", "group", group)
+              .increment();
           deadline = currentDeadline;
         }
-        context.set(KEY_DEADLINE, deadline);
+        context.put(KEY_DEADLINE, deadline);
       }
       if (criticality != null) {
         Criticality currentCriticality = context.get(KEY_CRITICALITY);
         if (currentCriticality != null) {
           // Code smell we want to know about.
-          meterRegistry.counter("TwContext.UnitOfWork.CriticalityChanged", "group", group).increment();
+          meterRegistry.counter("TwContext.UnitOfWork.CriticalityChanged", "group", group)
+              .increment();
         } else {
-          context.set(KEY_CRITICALITY, criticality);
+          context.put(KEY_CRITICALITY, criticality);
         }
       }
       return context;

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.NonNull;
@@ -15,50 +16,49 @@ public class TwContext {
   public static final String GROUP_KEY = "TwContextGroup";
   public static final String NAME_KEY = "TwContextName";
   public static final String GROUP_GENERIC = "Generic";
+  public static final String NAME_GENERIC = "Generic";
 
   private static final ThreadLocal<TwContext> contextTl = new ThreadLocal<>();
-  private static final List<TwContextInterceptor> interceptors = new ArrayList<>();
-  private static final TwContext ROOT = new TwContext(null);
+  private static final List<TwContextExecutionInterceptor> interceptors =
+      new CopyOnWriteArrayList<>();
+  private static final TwContext ROOT_CONTEXT = new TwContext(null, true);
   private static final int MAX_DEPTH = 1000;
 
   public static TwContext current() {
-    TwContext context = contextTl.get();
-    if (context == null) {
-      return ROOT;
-    }
-    return context;
+    TwContext twContext = contextTl.get();
+    return twContext == null ? ROOT_CONTEXT : twContext;
   }
 
-  public static TwContext newSubContext() {
-    return new TwContext();
-  }
-
-  public static void addInterceptor(TwContextInterceptor interceptor) {
+  public static void addExecutionInterceptor(TwContextExecutionInterceptor interceptor) {
     interceptors.add(interceptor);
+  }
+
+  public static List<TwContextExecutionInterceptor> getExecutionInterceptors() {
+    return interceptors;
   }
 
   @Getter
   private TwContext parent;
-  @Getter
-  private Map<String, Object> attributes;
-  @Getter
-  private Map<String, Object> currentAttributes;
 
-  public TwContext() {
-    this(TwContext.current());
+  private final Map<String, Object> attributes;
+  private final Map<String, Object> newAttributes;
+
+  @Getter
+  private boolean root;
+
+  public TwContext(@NonNull TwContext parent) {
+    this(parent, false);
   }
 
-  public TwContext(TwContext parent) {
+  private TwContext(TwContext parent, boolean root) {
     this.parent = parent;
-    if (parent == null) {
-      attributes = new HashMap<>();
-      currentAttributes = new HashMap<>();
-      setGroup(GROUP_GENERIC);
-    } else {
-      attributes = new HashMap<>(parent.attributes);
-      currentAttributes = new HashMap<>();
-    }
-    attributes = new HashMap<>();
+    this.root = root;
+    attributes = parent == null ? new HashMap<>() : new HashMap<>(parent.attributes);
+    newAttributes = new HashMap<>();
+  }
+
+  public TwContext createSubContext() {
+    return new TwContext(this);
   }
 
   public TwContext asEntryPoint(@NonNull String group, @NonNull String name) {
@@ -69,8 +69,8 @@ public class TwContext {
       throw new IllegalStateException("Empty name provided.");
     }
 
-    set(GROUP_KEY, group);
-    set(NAME_KEY, name);
+    put(GROUP_KEY, group);
+    put(NAME_KEY, name);
     return this;
   }
 
@@ -81,25 +81,35 @@ public class TwContext {
   }
 
   public void detach(TwContext previous) {
-    contextTl.set(previous);
+    if (previous == null || previous.isRoot()) {
+      contextTl.remove();
+    } else {
+      contextTl.set(previous);
+    }
   }
 
+  @SuppressWarnings("unchecked")
   public <T> T get(String key) {
     return (T) attributes.get(key);
   }
 
-  public <T> T getCurrent(String key) {
-    return (T) currentAttributes.get(key);
+  @SuppressWarnings("unchecked")
+  public <T> T getNew(String key) {
+    return (T) newAttributes.get(key);
   }
 
-  public TwContext set(String key, Object value) {
+  @SuppressWarnings("UnusedReturnValue")
+  public TwContext put(String key, Object value) {
+    if (root) {
+      throw new IllegalStateException("You can not add values into root context.");
+    }
     if (value == null) {
       attributes.remove(key);
-      currentAttributes.remove(key);
+      newAttributes.remove(key);
     } else {
       if (!Objects.equals(attributes.get(key), value)) {
         attributes.put(key, value);
-        currentAttributes.put(key, value);
+        newAttributes.put(key, value);
       }
     }
     return this;
@@ -112,23 +122,29 @@ public class TwContext {
       if (Objects.equals(context.get(key), search)) {
         context.attributes.put(key, value);
       }
-      if (Objects.equals(context.getCurrent(key), search)) {
-        context.currentAttributes.put(key, value);
+      if (Objects.equals(context.getNew(key), search)) {
+        context.newAttributes.put(key, value);
       }
       context = context.getParent();
       if (i++ > MAX_DEPTH) {
-        throw new IllegalStateException("Indefinite loop detected. Most likely the parent-chain is circular.");
+        throw new IllegalStateException(
+            "Indefinite loop detected. Most likely the parent-chain is circular.");
       }
     }
   }
 
+  @SuppressWarnings("UnusedReturnValue")
   public TwContext setName(@NonNull String name) {
-    set(NAME_KEY, name);
+    put(NAME_KEY, name);
+    if (getGroup() == null) {
+      setGroup(GROUP_GENERIC);
+    }
     return this;
   }
 
+  @SuppressWarnings("UnusedReturnValue")
   public TwContext setGroup(@NonNull String group) {
-    set(GROUP_KEY, group);
+    put(GROUP_KEY, group);
     return this;
   }
 
@@ -157,8 +173,8 @@ public class TwContext {
   }
 
   private <T> T executeWithInterceptors(Supplier<T> supplier) {
-    List<TwContextInterceptor> applicableInterceptors = new ArrayList<>();
-    for (TwContextInterceptor interceptor : TwContext.interceptors) {
+    List<TwContextExecutionInterceptor> applicableInterceptors = new ArrayList<>();
+    for (TwContextExecutionInterceptor interceptor : TwContext.interceptors) {
       if (interceptor.applies(this)) {
         applicableInterceptors.add(interceptor);
       }
@@ -166,10 +182,12 @@ public class TwContext {
     return executeWithInterceptors(supplier, applicableInterceptors, 0);
   }
 
-  private <T> T executeWithInterceptors(Supplier<T> supplier, List<TwContextInterceptor> interceptors, int interceptorIdx) {
+  private <T> T executeWithInterceptors(Supplier<T> supplier,
+      List<TwContextExecutionInterceptor> interceptors, int interceptorIdx) {
     if (interceptorIdx >= interceptors.size()) {
       return supplier.get();
     }
-    return interceptors.get(interceptorIdx).intercept(() -> executeWithInterceptors(supplier, interceptors, interceptorIdx + 1));
+    return interceptors.get(interceptorIdx)
+        .intercept(this, () -> executeWithInterceptors(supplier, interceptors, interceptorIdx + 1));
   }
 }
