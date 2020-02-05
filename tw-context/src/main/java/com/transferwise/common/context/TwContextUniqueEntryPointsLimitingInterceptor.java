@@ -1,5 +1,7 @@
 package com.transferwise.common.context;
 
+import com.newrelic.api.agent.NewRelic;
+import com.newrelic.api.agent.Trace;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Map;
@@ -39,8 +41,13 @@ public class TwContextUniqueEntryPointsLimitingInterceptor implements
   }
 
   @Override
+  @Trace(dispatcher = true)
   public <T> T intercept(TwContext context, Supplier<T> supplier) {
-    Pair<String, String> key = Pair.of(context.getGroup(), context.getName());
+    String group = context.getGroup();
+    String name = context.getName();
+    NewRelic.setTransactionName(group, name);
+
+    Pair<String, String> key = Pair.of(group, name);
 
     if (uniqueEntryPointsMap.containsKey(key)) {
       return supplier.get();

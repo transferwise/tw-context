@@ -1,5 +1,7 @@
 package com.transferwise.common.context;
 
+import static com.transferwise.common.context.TwContextMetrics.TAG_EP_GROUP;
+import static com.transferwise.common.context.TwContextMetrics.TAG_EP_NAME;
 import static com.transferwise.common.context.UnitOfWork.KEY_CRITICALITY;
 import static com.transferwise.common.context.UnitOfWork.KEY_DEADLINE;
 
@@ -23,7 +25,7 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
   }
 
   @Override
-  public Builder create() {
+  public Builder newUnitOfWork() {
     return new DefaultBuilder(meterRegistry, null, null);
   }
 
@@ -84,7 +86,7 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
         Instant currentDeadline = context.get(KEY_DEADLINE);
         if (currentDeadline != null && currentDeadline.isBefore(deadline)) {
           // Code smell we want to know about.
-          meterRegistry.counter("TwContext.UnitOfWork.DeadlineShrinked", "group", group)
+          meterRegistry.counter("TwContext.UnitOfWork.DeadlineReduced", TAG_EP_GROUP, group)
               .increment();
           deadline = currentDeadline;
         }
@@ -94,12 +96,14 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
         Criticality currentCriticality = context.get(KEY_CRITICALITY);
         if (currentCriticality != null) {
           // Code smell we want to know about.
-          meterRegistry.counter("TwContext.UnitOfWork.CriticalityChanged", "group", group)
+          meterRegistry.counter("TwContext.UnitOfWork.CriticalityChanged", TAG_EP_NAME, group)
               .increment();
         } else {
           context.put(KEY_CRITICALITY, criticality);
         }
       }
+
+      context.put(UnitOfWork.KEY_UNIT_OF_WORK, Boolean.TRUE);
       return context;
     }
 

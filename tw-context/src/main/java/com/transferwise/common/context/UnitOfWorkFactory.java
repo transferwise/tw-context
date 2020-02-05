@@ -9,7 +9,7 @@ public interface UnitOfWorkFactory {
 
   Builder asEntryPoint(String group, String name);
 
-  Builder create();
+  Builder newUnitOfWork();
 
   interface Builder {
 

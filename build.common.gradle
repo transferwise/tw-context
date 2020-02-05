@@ -6,6 +6,7 @@ ext.artifactoryPassword = project.hasProperty("artifactoryPassword") ? project.a
 ext.projectGitHubRepoName = "tw-context"
 ext.projectScmUrl = "https://github.com/transferwise/tw-context"
 ext.projectScmConnection = "scm:git:git://github.com/transferwise/tw-base-utils.git"
+ext.springBootVersion = "2.2.4.RELEASE"
 
 buildscript {
     repositories {
@@ -32,9 +33,9 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor(platform("org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE"))
-    compileOnly(platform("org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE"))
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:2.2.4.RELEASE"))
+    annotationProcessor(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
+    compileOnly(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
 
     annotationProcessor("org.projectlombok:lombok")
 
@@ -162,13 +163,15 @@ tasks.withType(Checkstyle) {
     //config = getCheckstyleConfig()
     config = resources.text.fromFile(file('../google_checks.xml'))
 
+    maxWarnings = 0
+
     reports {
         xml.enabled false
         html.enabled true
     }
 }
 
-private def getCheckstyleConfig(){
+private def getCheckstyleConfig() {
     def checkstyleJar = project.configurations.checkstyle.find({
         return it.name.contains("checkstyle")
     })

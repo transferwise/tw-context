@@ -22,7 +22,6 @@ public class TwContext {
   private static final List<TwContextExecutionInterceptor> interceptors =
       new CopyOnWriteArrayList<>();
   private static final TwContext ROOT_CONTEXT = new TwContext(null, true);
-  private static final int MAX_DEPTH = 1000;
 
   public static TwContext current() {
     TwContext twContext = contextTl.get();
@@ -115,30 +114,9 @@ public class TwContext {
     return this;
   }
 
-  public void replaceValueDeep(String key, Object search, Object value) {
-    TwContext context = this;
-    int i = 0;
-    while (context != null) {
-      if (Objects.equals(context.get(key), search)) {
-        context.attributes.put(key, value);
-      }
-      if (Objects.equals(context.getNew(key), search)) {
-        context.newAttributes.put(key, value);
-      }
-      context = context.getParent();
-      if (i++ > MAX_DEPTH) {
-        throw new IllegalStateException(
-            "Indefinite loop detected. Most likely the parent-chain is circular.");
-      }
-    }
-  }
-
   @SuppressWarnings("UnusedReturnValue")
   public TwContext setName(@NonNull String name) {
     put(NAME_KEY, name);
-    if (getGroup() == null) {
-      setGroup(GROUP_GENERIC);
-    }
     return this;
   }
 
@@ -149,11 +127,13 @@ public class TwContext {
   }
 
   public String getName() {
-    return get(NAME_KEY);
+    String name = get(NAME_KEY);
+    return name == null ? NAME_GENERIC : name;
   }
 
   public String getGroup() {
-    return get(GROUP_KEY);
+    String group = get(GROUP_KEY);
+    return group == null ? GROUP_GENERIC : group;
   }
 
   public <T> T execute(Supplier<T> supplier) {

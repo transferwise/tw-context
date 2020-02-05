@@ -12,6 +12,7 @@ public class UnitOfWork {
 
   public static final String KEY_DEADLINE = "TwContextDeadline";
   public static final String KEY_CRITICALITY = "TwContextCriticality";
+  public static final String KEY_UNIT_OF_WORK = "TwContextUnitOfWork";
 
   public static Instant getDeadline() {
     return getDeadline(TwContext.current());
@@ -47,6 +48,14 @@ public class UnitOfWork {
     if (hasDeadlinePassed(context)) {
       throw new DeadlineExceededException(getDeadline());
     }
+  }
+
+  public static boolean hasBeenDefined(TwContext context) {
+    return Boolean.TRUE.equals(context.get(KEY_UNIT_OF_WORK));
+  }
+
+  public static boolean hasBeenDefined() {
+    return hasBeenDefined(TwContext.current());
   }
 
   private UnitOfWork() {
