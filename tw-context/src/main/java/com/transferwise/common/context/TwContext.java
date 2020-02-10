@@ -73,6 +73,10 @@ public class TwContext {
     return this;
   }
 
+  public boolean isNewEntryPoint() {
+    return getNew(NAME_KEY) != null;
+  }
+
   public TwContext attach() {
     TwContext current = contextTl.get();
     contextTl.set(this);

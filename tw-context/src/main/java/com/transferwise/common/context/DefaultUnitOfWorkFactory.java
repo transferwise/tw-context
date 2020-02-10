@@ -10,6 +10,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Supplier;
+import lombok.NonNull;
 
 public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
 
@@ -20,7 +21,7 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
   }
 
   @Override
-  public Builder asEntryPoint(String group, String name) {
+  public Builder asEntryPoint(@NonNull String group, @NonNull String name) {
     return new DefaultBuilder(meterRegistry, group, name);
   }
 
@@ -65,11 +66,14 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
     @Override
     public TwContext toContext() {
       TwContext context = TwContext.current().createSubContext();
-      if (entryPointGroup != null) {
-        context.setGroup(entryPointGroup);
-      }
-      if (entryPointName != null) {
-        context.setName(entryPointName);
+
+      if (entryPointGroup != null || entryPointName != null) {
+        if (entryPointName == null || entryPointGroup == null) {
+          throw new IllegalStateException(
+              "Both group and name has to be set for an entrypoint. group='" + entryPointGroup + "', name='"
+                  + entryPointName + "'");
+        }
+        context = context.asEntryPoint(entryPointGroup, entryPointName);
       }
 
       String group = context.getGroup();

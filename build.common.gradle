@@ -4,8 +4,8 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 ext.artifactoryUser = project.hasProperty("artifactoryUser") ? project.artifactoryUser : System.env.ARTIFACTORY_USER as String
 ext.artifactoryPassword = project.hasProperty("artifactoryPassword") ? project.artifactoryPassword : System.env.ARTIFACTORY_PASSWORD as String
 ext.projectGitHubRepoName = "tw-context"
-ext.projectScmUrl = "https://github.com/transferwise/tw-context"
-ext.projectScmConnection = "scm:git:git://github.com/transferwise/tw-base-utils.git"
+ext.projectScmUrl = "https://github.com/transferwise/${projectGitHubRepoName}"
+ext.projectScmConnection = "scm:git:git://github.com/transferwise/${projectGitHubRepoName}.git"
 ext.springBootVersion = "2.2.4.RELEASE"
 
 buildscript {
@@ -187,4 +187,3 @@ task pushTag(type: Exec) {
 }
 
 pushTag.dependsOn addTag
-publish.dependsOn pushTag
