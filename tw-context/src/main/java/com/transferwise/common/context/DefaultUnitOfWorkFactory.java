@@ -9,7 +9,6 @@ import com.transferwise.common.baseutils.clock.ClockHolder;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.function.Supplier;
 import lombok.NonNull;
 
 public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
@@ -109,16 +108,6 @@ public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
 
       context.put(UnitOfWork.KEY_UNIT_OF_WORK, Boolean.TRUE);
       return context;
-    }
-
-    @Override
-    public <T> T execute(Supplier<T> supplier) {
-      return toContext().execute(supplier);
-    }
-
-    @Override
-    public void execute(Runnable runnable) {
-      toContext().execute(runnable);
     }
   }
 }

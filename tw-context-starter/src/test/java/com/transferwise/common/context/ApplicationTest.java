@@ -16,14 +16,14 @@ public class ApplicationTest {
 
   @Test
   void applicationIsConfigured() {
-    assertEquals("123", unitOfWorkFactory.asEntryPoint("A", "B").execute(() -> "123"));
+    assertEquals("123", unitOfWorkFactory.asEntryPoint("A", "B").toContext().execute(() -> "123"));
 
     assertTrue(TwContext.getExecutionInterceptors().stream()
         .anyMatch(i -> i instanceof TwContextUniqueEntryPointsLimitingInterceptor));
 
     AtomicInteger genericCount = new AtomicInteger();
     for (int i = 0; i < 2000; i++) {
-      unitOfWorkFactory.asEntryPoint(String.valueOf(i), String.valueOf(i)).execute(() -> {
+      unitOfWorkFactory.asEntryPoint(String.valueOf(i), String.valueOf(i)).toContext().execute(() -> {
         String group = TwContext.current().getGroup();
         String name = TwContext.current().getName();
 

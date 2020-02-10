@@ -2,7 +2,6 @@ package com.transferwise.common.context;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.function.Supplier;
 import lombok.NonNull;
 
 public interface UnitOfWorkFactory {
@@ -20,10 +19,5 @@ public interface UnitOfWorkFactory {
     Builder criticality(@NonNull Criticality criticality);
 
     TwContext toContext();
-
-    <T> T execute(Supplier<T> supplier);
-
-    void execute(Runnable runnable);
   }
-
 }

@@ -146,10 +146,15 @@ public class TwContext {
   }
 
   public void execute(Runnable runnable) {
-    execute(() -> {
-      runnable.run();
-      return null;
-    });
+    TwContext previous = attach();
+    try {
+      executeWithInterceptors(() -> {
+        runnable.run();
+        return null;
+      });
+    } finally {
+      detach(previous);
+    }
   }
 
   private <T> T executeWithInterceptors(Supplier<T> supplier) {
@@ -162,8 +167,7 @@ public class TwContext {
     return executeWithInterceptors(supplier, applicableInterceptors, 0);
   }
 
-  private <T> T executeWithInterceptors(Supplier<T> supplier,
-      List<TwContextExecutionInterceptor> interceptors, int interceptorIdx) {
+  private <T> T executeWithInterceptors(Supplier<T> supplier, List<TwContextExecutionInterceptor> interceptors, int interceptorIdx) {
     if (interceptorIdx >= interceptors.size()) {
       return supplier.get();
     }
