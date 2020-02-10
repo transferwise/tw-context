@@ -1,6 +1,5 @@
 package com.transferwise.common.context;
 
-import com.newrelic.api.agent.NewRelic;
 import com.newrelic.api.agent.Trace;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -13,8 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 
 @Slf4j
-public class TwContextUniqueEntryPointsLimitingInterceptor implements
-    TwContextExecutionInterceptor {
+public class TwContextUniqueEntryPointsLimitingInterceptor implements TwContextExecutionInterceptor {
 
   private static final int DEFAULT_MAX_ENTRIES = 1000;
 
@@ -41,11 +39,11 @@ public class TwContextUniqueEntryPointsLimitingInterceptor implements
   }
 
   @Override
+  // We will start newrelic trace here, instead of a separate interceptor, to save stacktrace lines.
   @Trace(dispatcher = true)
   public <T> T intercept(TwContext context, Supplier<T> supplier) {
     String group = context.getGroup();
     String name = context.getName();
-    NewRelic.setTransactionName(group, name);
 
     Pair<String, String> key = Pair.of(group, name);
 
@@ -65,8 +63,7 @@ public class TwContextUniqueEntryPointsLimitingInterceptor implements
       }
 
       if (full) {
-        context.setGroup(TwContext.GROUP_GENERIC);
-        context.setName(TwContext.NAME_GENERIC);
+        context.setName(TwContext.GROUP_GENERIC, TwContext.NAME_GENERIC);
       }
       return supplier.get();
     } finally {

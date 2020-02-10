@@ -28,7 +28,7 @@ public class UnitOfWork {
 
   public static Criticality getCriticality(@NonNull TwContext context) {
     Criticality criticality = context.get(KEY_CRITICALITY);
-    return criticality == null ? Criticality.SCHEDDABLE : criticality;
+    return criticality == null ? Criticality.SHEDDABLE_PLUS : criticality;
   }
 
   public static boolean hasDeadlinePassed() {

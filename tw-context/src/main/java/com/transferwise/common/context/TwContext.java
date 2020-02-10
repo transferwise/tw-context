@@ -1,5 +1,6 @@
 package com.transferwise.common.context;
 
+import com.newrelic.api.agent.NewRelic;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -68,8 +69,7 @@ public class TwContext {
       throw new IllegalStateException("Empty name provided.");
     }
 
-    put(GROUP_KEY, group);
-    put(NAME_KEY, name);
+    setName(group, name);
     return this;
   }
 
@@ -119,14 +119,10 @@ public class TwContext {
   }
 
   @SuppressWarnings("UnusedReturnValue")
-  public TwContext setName(@NonNull String name) {
+  public TwContext setName(@NonNull String group, @NonNull String name) {
     put(NAME_KEY, name);
-    return this;
-  }
-
-  @SuppressWarnings("UnusedReturnValue")
-  public TwContext setGroup(@NonNull String group) {
     put(GROUP_KEY, group);
+    NewRelic.setTransactionName(group, name);
     return this;
   }
 

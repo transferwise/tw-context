@@ -5,11 +5,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.NonNull;
 
+/**
+ * Levels are taken from https://landing.google.com/sre/sre-book/chapters/handling-overload/
+ */
 public enum Criticality {
+  // Ordered from highest to lowest priority
+  // Sheddable_plus should be used as a default
   CRITICAL_PLUS,
   CRITICAL,
-  SCHEDDABLE_PLUS,
-  SCHEDDABLE;
+  SHEDDABLE_PLUS,
+  SHEDDABLE;
 
   private static final Map<String, Criticality> nameIndex = Arrays.stream(Criticality.values())
       .collect(Collectors.toMap(Criticality::name, c -> c));
