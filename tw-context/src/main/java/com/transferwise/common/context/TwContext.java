@@ -136,6 +136,16 @@ public class TwContext {
     return group == null ? GROUP_GENERIC : group;
   }
 
+  // Sadly we need another method for Groovy, as it can not distinguish always which execute to use.
+  public <T> T call(Supplier<T> supplier) {
+    TwContext previous = attach();
+    try {
+      return executeWithInterceptors(supplier);
+    } finally {
+      detach(previous);
+    }
+  }
+
   public <T> T execute(Supplier<T> supplier) {
     TwContext previous = attach();
     try {

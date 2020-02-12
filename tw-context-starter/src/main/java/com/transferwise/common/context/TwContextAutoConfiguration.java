@@ -13,8 +13,7 @@ public class TwContextAutoConfiguration {
   }
 
   @Bean
-  public TwContextUniqueEntryPointsLimitingInterceptor twContextUniqueEpLimitingInterceptor(
-      MeterRegistry meterRegistry) {
+  public TwContextUniqueEntryPointsLimitingInterceptor twContextUniqueEpLimitingInterceptor(MeterRegistry meterRegistry) {
     TwContextUniqueEntryPointsLimitingInterceptor interceptor =
         new TwContextUniqueEntryPointsLimitingInterceptor(meterRegistry);
     TwContext.addExecutionInterceptor(interceptor);
