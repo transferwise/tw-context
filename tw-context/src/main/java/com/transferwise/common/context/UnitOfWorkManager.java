@@ -4,11 +4,19 @@ import java.time.Duration;
 import java.time.Instant;
 import lombok.NonNull;
 
-public interface UnitOfWorkFactory {
+public interface UnitOfWorkManager {
 
-  Builder asEntryPoint(String group, String name);
+  Builder createEntryPoint(String group, String name);
 
-  Builder newUnitOfWork();
+  Builder createUnitOfWork();
+
+  UnitOfWork getUnitOfWork();
+
+  UnitOfWork getUnitOfWork(TwContext context);
+
+  void checkDeadLine(String sourceKey);
+
+  void checkDeadLine(@NonNull TwContext context, String sourceKey);
 
   interface Builder {
 

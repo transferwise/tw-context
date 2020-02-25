@@ -12,18 +12,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class ApplicationTest {
 
   @Autowired
-  private UnitOfWorkFactory unitOfWorkFactory;
+  private UnitOfWorkManager unitOfWorkManager;
 
   @Test
   void applicationIsConfigured() {
-    assertEquals("123", unitOfWorkFactory.asEntryPoint("A", "B").toContext().execute(() -> "123"));
+    assertEquals("123", unitOfWorkManager.createEntryPoint("A", "B").toContext().execute(() -> "123"));
 
     assertTrue(TwContext.getExecutionInterceptors().stream()
         .anyMatch(i -> i instanceof TwContextUniqueEntryPointsLimitingInterceptor));
 
     AtomicInteger genericCount = new AtomicInteger();
     for (int i = 0; i < 2000; i++) {
-      unitOfWorkFactory.asEntryPoint(String.valueOf(i), String.valueOf(i)).toContext().execute(() -> {
+      unitOfWorkManager.createEntryPoint(String.valueOf(i), String.valueOf(i)).toContext().execute(() -> {
         String group = TwContext.current().getGroup();
         String name = TwContext.current().getName();
 
