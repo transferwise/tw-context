@@ -1,6 +1,5 @@
 package com.transferwise.common.context;
 
-import com.newrelic.api.agent.NewRelic;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -130,7 +129,6 @@ public class TwContext {
   public TwContext setName(@NonNull String group, @NonNull String name) {
     put(NAME_KEY, name);
     put(GROUP_KEY, group);
-    NewRelic.setTransactionName(group, name);
     return this;
   }
 
