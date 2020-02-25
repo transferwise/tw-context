@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 public class TwContextAutoConfiguration {
 
   @Bean
-  public UnitOfWorkFactory twContextUnitOfWorkFactory(MeterRegistry meterRegistry) {
-    return new DefaultUnitOfWorkFactory(meterRegistry);
+  public UnitOfWorkManager twContextUnitOfWorkManager(MeterRegistry meterRegistry) {
+    return new DefaultUnitOfWorkManager(meterRegistry);
   }
 
   @Bean

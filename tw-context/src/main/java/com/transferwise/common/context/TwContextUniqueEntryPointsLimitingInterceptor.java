@@ -1,7 +1,6 @@
 package com.transferwise.common.context;
 
 import com.newrelic.api.agent.Trace;
-import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,12 +24,11 @@ public class TwContextUniqueEntryPointsLimitingInterceptor implements TwContextE
     this(meterRegistry, DEFAULT_MAX_ENTRIES);
   }
 
-  public TwContextUniqueEntryPointsLimitingInterceptor(MeterRegistry meterRegistry,
-      int maxEntries) {
+  public TwContextUniqueEntryPointsLimitingInterceptor(MeterRegistry meterRegistry, int maxEntries) {
     this.maxEntries = maxEntries;
 
-    Gauge.builder("TwContext.UniqueEntryPoints.count", () -> entriesCount).register(meterRegistry);
-    Gauge.builder("TwContext.UniqueEntryPoints.max", () -> maxEntries).register(meterRegistry);
+    TwContextMetricsTemplate metricsTemplate = new TwContextMetricsTemplate(meterRegistry);
+    metricsTemplate.registerUniqueEntryPointsCounts(() -> entriesCount, () -> maxEntries);
   }
 
   @Override

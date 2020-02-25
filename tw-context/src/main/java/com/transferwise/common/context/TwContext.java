@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.NonNull;
@@ -46,6 +47,8 @@ public class TwContext {
   @Getter
   private boolean root;
 
+  private Function<Supplier<?>, Object> executionWrapper;
+
   public TwContext(@NonNull TwContext parent) {
     this(parent, false);
   }
@@ -70,6 +73,11 @@ public class TwContext {
     }
 
     setName(group, name);
+    return this;
+  }
+
+  public <T> TwContext withExecutionWrapper(Function<Supplier<?>, Object> wrapper) {
+    this.executionWrapper = wrapper;
     return this;
   }
 
@@ -136,11 +144,21 @@ public class TwContext {
     return group == null ? GROUP_GENERIC : group;
   }
 
+  @SuppressWarnings("unchecked")
+  private <T> Supplier<T> getWrappedSupplier(Supplier<T> supplier) {
+    if (executionWrapper == null) {
+      return supplier;
+    }
+    return () -> (T) executionWrapper.apply(supplier);
+  }
+
+  // We are copy pasting code to avoid additional stack frames.
+
   // Sadly we need another method for Groovy, as it can not distinguish always which execute to use.
   public <T> T call(Supplier<T> supplier) {
     TwContext previous = attach();
     try {
-      return executeWithInterceptors(supplier);
+      return executeWithInterceptors(getWrappedSupplier(supplier));
     } finally {
       detach(previous);
     }
@@ -149,7 +167,7 @@ public class TwContext {
   public <T> T execute(Supplier<T> supplier) {
     TwContext previous = attach();
     try {
-      return executeWithInterceptors(supplier);
+      return executeWithInterceptors(getWrappedSupplier(supplier));
     } finally {
       detach(previous);
     }
@@ -158,10 +176,10 @@ public class TwContext {
   public void execute(Runnable runnable) {
     TwContext previous = attach();
     try {
-      executeWithInterceptors(() -> {
+      executeWithInterceptors(getWrappedSupplier(() -> {
         runnable.run();
         return null;
-      });
+      }));
     } finally {
       detach(previous);
     }
