@@ -34,14 +34,20 @@ repositories {
 
 dependencies {
     annotationProcessor(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
+    testAnnotationProcessor(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
     compileOnly(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
     implementation(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
+    testImplementation(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
 
     annotationProcessor("org.projectlombok:lombok")
 
     compileOnly("org.projectlombok:lombok")
 
+    testAnnotationProcessor("org.projectlombok:lombok")
+    testImplementation("org.projectlombok:lombok")
+    testImplementation("ch.qos.logback:logback-classic")
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation 'org.assertj:assertj-core'
 }
 
 java {
