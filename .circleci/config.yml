@@ -11,7 +11,7 @@ references:
       TERM: vt100
       GRADLE_OPTS: '-Dorg.gradle.console=plain'
   working_directory: &working_directory
-    working_directory: ~/tw-context
+    working_directory: ~/repo
 
 jobs:
   build:
@@ -20,7 +20,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: tw-context-v1-{{ checksum "build.gradle" }}
+          key: v1-dependencies-{{ checksum "build.gradle" }}
       - run:
           name: Assemble jar
           command: ./gradlew assemble --console=plain --no-daemon
@@ -30,7 +30,7 @@ jobs:
       - save_cache:
           paths:
             - ~/.gradle/
-          key: tw-context-v1-{{ checksum "build.gradle" }}
+          key: v1-dependencies-{{ checksum "build.gradle" }}
       - store_test_results:
           path: ./tw-context/build/test-results/
       - store_test_results:
@@ -45,9 +45,9 @@ jobs:
     resource_class: small
     steps:
       - attach_workspace:
-          at: ~/tw-context
+          at: ~/repo
       - restore_cache:
-          key: tw-context-v1-{{ checksum "build.gradle" }}
+          key: v1-dependencies-{{ checksum "build.gradle" }}
       - run:
           name: Set git config
           command: git config --global user.name "TransferWise CircleCI" && git config --global user.email circle@circle.tw.ee
