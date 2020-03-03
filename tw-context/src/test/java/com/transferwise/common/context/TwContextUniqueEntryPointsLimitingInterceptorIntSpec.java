@@ -34,6 +34,7 @@ public class TwContextUniqueEntryPointsLimitingInterceptorIntSpec {
         ExceptionUtils.doUnchecked(() -> {
           countDownLatch.countDown();
           countDownLatch1.await(sleepTimeMs, TimeUnit.MILLISECONDS);
+          assertThat(TwContext.current().getName()).isEqualTo("A");
         });
       });
     });
@@ -41,6 +42,8 @@ public class TwContextUniqueEntryPointsLimitingInterceptorIntSpec {
     Thread t1 = new Thread(() -> {
       TwContext.current().createSubContext().asEntryPoint("B", "B").execute(() -> {
         log.info("Hello World!");
+        // We were already full.
+        assertThat(TwContext.current().getName()).isEqualTo("Generic");
         countDownLatch1.countDown();
       });
     });
