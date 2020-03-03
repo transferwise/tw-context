@@ -49,8 +49,12 @@ jobs:
       - restore_cache:
           key: v1-dependencies-{{ checksum "build.gradle" }}
       - run:
-          name: Set git config
-          command: git config --global user.name "TransferWise CircleCI" && git config --global user.email circle@circle.tw.ee
+          name: Configure git
+          command: |
+            mkdir -p ~/.ssh
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+            git config --global user.email "circleci@transferwise.com"
+            git config --global user.name "tw-circleci"
       - run:
           name: Publish artifacts
           command: ./gradlew pushTag publish --console=plain
