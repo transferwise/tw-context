@@ -52,15 +52,16 @@ public class TwContextUniqueEntryPointsLimitingInterceptor implements TwContextE
       return supplier.get();
     }
 
-    boolean full = false;
+    boolean full;
     boolean warnAboutFull = false;
     lock.lock();
     try {
       full = entriesCount == maxEntries;
 
       if (!full) {
-        uniqueEntryPointsMap.put(key, Boolean.TRUE);
-        if (++entriesCount == maxEntries) {
+        Boolean result = uniqueEntryPointsMap.put(key, Boolean.TRUE);
+
+        if (result == null && ++entriesCount == maxEntries) {
           warnAboutFull = true;
         }
       }
