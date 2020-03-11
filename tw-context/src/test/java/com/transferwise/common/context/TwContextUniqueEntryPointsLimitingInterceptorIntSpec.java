@@ -57,4 +57,33 @@ public class TwContextUniqueEntryPointsLimitingInterceptorIntSpec {
 
     assertThat(ClockHolder.getClock().millis() - startTimeMs).isLessThan(sleepTimeMs / 2);
   }
+
+  /**
+   * Technically this test has a chance to succeed on buggy code, but it is very very small. Alternative is to mutate the code, but then there are
+   * another, bigger risks.
+   */
+  @Test
+  @SneakyThrows
+  public void testThatUniqueEntryPointIsCountedOnce() {
+    MeterRegistry meterRegistry = new SimpleMeterRegistry();
+    TwContext.addExecutionInterceptor(new TwContextUniqueEntryPointsLimitingInterceptor(meterRegistry, 100));
+
+    final int n = 100;
+    Thread[] threads = new Thread[n];
+    for (int i = 0; i < n; i++) {
+      threads[i] = new Thread(() -> {
+        TwContext.current().createSubContext().asEntryPoint("A", "A").execute(() -> {
+          //no-op
+        });
+      });
+    }
+    for (int i = 0; i < n; i++) {
+      threads[i].start();
+    }
+    for (int i = 0; i < n; i++) {
+      threads[i].join();
+    }
+
+    assertThat(meterRegistry.get("TwContext_UniqueEntryPoints_count").gauge().value()).isEqualTo(1);
+  }
 }

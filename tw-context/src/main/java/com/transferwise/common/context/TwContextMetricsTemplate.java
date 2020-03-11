@@ -5,7 +5,6 @@ import io.micrometer.core.instrument.MeterRegistry;
 import java.util.function.Supplier;
 
 public class TwContextMetricsTemplate {
-
   public static final String TAG_EP_NAME = "epName";
   public static final String TAG_EP_GROUP = "epGroup";
   public static final String TAG_CRITICALITY = "criticality";
