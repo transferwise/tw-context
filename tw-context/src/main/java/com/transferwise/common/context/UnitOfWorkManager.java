@@ -5,6 +5,8 @@ import java.time.Instant;
 import lombok.NonNull;
 
 public interface UnitOfWorkManager {
+  String MDC_KEY_CRITICALITY = "tw_criticality";
+  String MDC_KEY_DEADLINE = "tw_deadline";
 
   Builder createEntryPoint(String group, String name);
 

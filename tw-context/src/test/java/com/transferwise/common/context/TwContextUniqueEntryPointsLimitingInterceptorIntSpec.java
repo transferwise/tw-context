@@ -84,6 +84,6 @@ public class TwContextUniqueEntryPointsLimitingInterceptorIntSpec {
       threads[i].join();
     }
 
-    assertThat(meterRegistry.get("TwContext_UniqueEntryPoints_count").gauge().value()).isEqualTo(1);
+    assertThat(meterRegistry.get(TwContextMetricsTemplate.METRIC_UNIQUE_ENTRYPOINTS).gauge().value()).isEqualTo(1);
   }
 }
