@@ -8,8 +8,10 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
+    implementation("com.newrelic.agent.java:newrelic-api:5.10.0")
     api project(":tw-context:")
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-actuator'
+    testImplementation("com.transferwise.common:tw-base-utils:1.2.8")
 }

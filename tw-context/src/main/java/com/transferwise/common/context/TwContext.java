@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 import lombok.Getter;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 
 public class TwContext {
 
@@ -18,6 +19,9 @@ public class TwContext {
   public static final String NAME_KEY = "TwContextName";
   public static final String GROUP_GENERIC = "Generic";
   public static final String NAME_GENERIC = "Generic";
+
+  public static final String MDC_KEY_EP_NAME = "tw_entrypoint_name";
+  public static final String MDC_KEY_EP_GROUP = "tw_entrypoint_group";
 
   private static final ThreadLocal<TwContext> contextTl = new ThreadLocal<>();
   private static final List<TwContextExecutionInterceptor> interceptors =
@@ -29,7 +33,7 @@ public class TwContext {
     return twContext == null ? ROOT_CONTEXT : twContext;
   }
 
-  public static void addExecutionInterceptor(TwContextExecutionInterceptor interceptor) {
+  public static void addExecutionInterceptor(@NonNull TwContextExecutionInterceptor interceptor) {
     interceptors.add(interceptor);
   }
 
@@ -37,11 +41,26 @@ public class TwContext {
     return interceptors;
   }
 
+  public static void putCurrentMdc(@NonNull String key, String value) {
+    if (value == null) {
+      MDC.remove(key);
+    } else {
+      MDC.put(key, value);
+    }
+    TwContext context = TwContext.current();
+    if (!context.isRoot()) {
+      context.mdc.put(key, value);
+    }
+  }
+
   @Getter
   private TwContext parent;
 
   private final Map<String, Object> attributes;
   private final Map<String, Object> newAttributes;
+
+  private Map<String, String> preAttachMdc;
+  private Map<String, String> mdc;
 
   @Getter
   private boolean root;
@@ -57,6 +76,7 @@ public class TwContext {
     this.root = root;
     attributes = parent == null ? new HashMap<>() : new HashMap<>(parent.attributes);
     newAttributes = new HashMap<>();
+    mdc = new HashMap<>();
   }
 
   public TwContext createSubContext() {
@@ -84,9 +104,24 @@ public class TwContext {
     return getNew(NAME_KEY) != null;
   }
 
+  public void putMdc(@NonNull String key, String value) {
+    mdc.put(key, value);
+  }
+
   public TwContext attach() {
-    TwContext current = contextTl.get();
+    final TwContext current = contextTl.get();
     contextTl.set(this);
+
+    preAttachMdc = MDC.getCopyOfContextMap();
+    mdc.entrySet().forEach(e -> {
+      String key = e.getKey();
+      String value = e.getValue();
+      if (value == null) {
+        MDC.remove(key);
+      } else {
+        MDC.put(key, value);
+      }
+    });
     return current;
   }
 
@@ -96,6 +131,15 @@ public class TwContext {
     } else {
       contextTl.set(previous);
     }
+
+    mdc.keySet().forEach(key -> {
+      String prevValue = preAttachMdc == null ? null : preAttachMdc.get(key);
+      if (prevValue == null) {
+        MDC.remove(key);
+      } else {
+        MDC.put(key, prevValue);
+      }
+    });
   }
 
   @SuppressWarnings("unchecked")
@@ -129,6 +173,10 @@ public class TwContext {
   public TwContext setName(@NonNull String group, @NonNull String name) {
     put(NAME_KEY, name);
     put(GROUP_KEY, group);
+
+    putMdc(MDC_KEY_EP_GROUP, group);
+    putMdc(MDC_KEY_EP_NAME, name);
+
     return this;
   }
 
@@ -153,7 +201,7 @@ public class TwContext {
   // We are copy pasting code to avoid additional stack frames.
 
   // Sadly we need another method for Groovy, as it can not distinguish always which execute to use.
-  public <T> T call(Supplier<T> supplier) {
+  public <T> T call(@NonNull Supplier<T> supplier) {
     TwContext previous = attach();
     try {
       return executeWithInterceptors(getWrappedSupplier(supplier));
@@ -162,7 +210,7 @@ public class TwContext {
     }
   }
 
-  public <T> T execute(Supplier<T> supplier) {
+  public <T> T execute(@NonNull Supplier<T> supplier) {
     TwContext previous = attach();
     try {
       return executeWithInterceptors(getWrappedSupplier(supplier));
@@ -171,7 +219,7 @@ public class TwContext {
     }
   }
 
-  public void execute(Runnable runnable) {
+  public void execute(@NonNull Runnable runnable) {
     TwContext previous = attach();
     try {
       executeWithInterceptors(getWrappedSupplier(() -> {

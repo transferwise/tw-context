@@ -5,7 +5,6 @@ import java.time.Instant;
 import lombok.NonNull;
 
 public interface UnitOfWorkManager {
-
   Builder createEntryPoint(String group, String name);
 
   Builder createUnitOfWork();

@@ -29,7 +29,7 @@ public class TwContextUniqueEntryPointsLimitingInterceptor implements TwContextE
     this.maxEntries = maxEntries;
 
     TwContextMetricsTemplate metricsTemplate = new TwContextMetricsTemplate(meterRegistry);
-    metricsTemplate.registerUniqueEntryPointsCounts(() -> entriesCount, () -> maxEntries);
+    metricsTemplate.registerUniqueEntryPointsGauges(() -> entriesCount, () -> maxEntries);
   }
 
   @Override

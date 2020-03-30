@@ -46,7 +46,7 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
     UnitOfWork unitOfWork = getUnitOfWork(context);
 
     if (unitOfWork != null && unitOfWork.hasDeadlinePassed()) {
-      metricsTemplate.registerDeadlineExceeded(context.getGroup(), context.getName(), sourceKey);
+      metricsTemplate.registerDeadlineExceeded(context.getGroup(), context.getName(), unitOfWork.getCriticality(), sourceKey);
       throw new DeadlineExceededException(unitOfWork.getDeadline());
     }
   }
@@ -115,7 +115,7 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
         Instant currentDeadline = newUnitOfWork.getDeadline();
         if (currentDeadline != null && currentDeadline.isBefore(deadline)) {
           // Code smell we want to know about.
-          metricsTemplate.registerDeadlineReduction(group, name);
+          metricsTemplate.registerDeadlineReduction(group, name, criticality);
           deadline = currentDeadline;
         }
         newUnitOfWork.setDeadline(deadline);
@@ -124,7 +124,7 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
         Criticality currentCriticality = newUnitOfWork.getCriticality();
         if (currentCriticality != null && !currentCriticality.equals(criticality)) {
           // Code smell we want to know about.
-          metricsTemplate.registerCriticalityChange(group, name);
+          metricsTemplate.registerCriticalityChange(group, name, criticality);
         }
         newUnitOfWork.setCriticality(criticality);
       }
