@@ -41,7 +41,7 @@ public class TwContextTest {
   }
 
   @Test
-  void testMdcIntegrationUsingStatingPut() {
+  void testMdcIntegrationUsingStaticPutMethod() {
     TwContext context = TwContext.current().createSubContext();
     String testKey = "testKey";
     String testValue = "testValue";
