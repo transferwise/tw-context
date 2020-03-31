@@ -23,6 +23,10 @@ public class TwContext {
   public static final String MDC_KEY_EP_NAME = "tw_entrypoint_name";
   public static final String MDC_KEY_EP_GROUP = "tw_entrypoint_group";
 
+  public static final String DOWNSTREAM_SERVICE_NAME_KEY = "TwDownstreamServiceName";
+  public static final String DOWNSTREAM_SERVICE_NAME_UNKNOWN = "Unknown";
+  public static final String MDC_KEY_DOWNSTREAM_SERVICE_NAME = "tw_downstream_service_name";
+
   private static final ThreadLocal<TwContext> contextTl = new ThreadLocal<>();
   private static final List<TwContextExecutionInterceptor> interceptors =
       new CopyOnWriteArrayList<>();
@@ -178,6 +182,19 @@ public class TwContext {
     putMdc(MDC_KEY_EP_NAME, name);
 
     return this;
+  }
+
+  @SuppressWarnings("UnusedReturnValue")
+  public TwContext setDownstreamServiceName(@NonNull String downstreamServiceName) {
+    put(DOWNSTREAM_SERVICE_NAME_KEY, downstreamServiceName);
+    putMdc(MDC_KEY_DOWNSTREAM_SERVICE_NAME, downstreamServiceName);
+
+    return this;
+  }
+
+  public String getDownstreamServiceName() {
+    String downstreamServiceName = get(DOWNSTREAM_SERVICE_NAME_KEY);
+    return downstreamServiceName == null ? DOWNSTREAM_SERVICE_NAME_UNKNOWN : downstreamServiceName;
   }
 
   public String getName() {

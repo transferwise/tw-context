@@ -100,4 +100,22 @@ public class TwContextTest {
     assertThat(MDC.get(testKey)).isNull();
   }
 
+  @Test
+  void testDownstreamServiceNameMethods() {
+    TwContext context = TwContext.current().createSubContext();
+    context.execute(() -> {
+      assertThat(context.getDownstreamServiceName()).isEqualTo(TwContext.DOWNSTREAM_SERVICE_NAME_UNKNOWN);
+      assertThat(MDC.get(TwContext.MDC_KEY_DOWNSTREAM_SERVICE_NAME)).isEqualTo(TwContext.DOWNSTREAM_SERVICE_NAME_UNKNOWN);
+      assertThat((String)context.get(TwContext.DOWNSTREAM_SERVICE_NAME_KEY)).isEqualTo(TwContext.DOWNSTREAM_SERVICE_NAME_UNKNOWN);
+    });
+
+    String testValue = "some_service";
+    context.setDownstreamServiceName(testValue);
+    context.execute(() -> {
+      assertThat(context.getDownstreamServiceName()).isEqualTo(testValue);
+      assertThat(MDC.get(TwContext.MDC_KEY_DOWNSTREAM_SERVICE_NAME)).isEqualTo(testValue);
+      assertThat((String)context.get(TwContext.DOWNSTREAM_SERVICE_NAME_KEY)).isEqualTo(testValue);
+    });
+  }
+
 }
