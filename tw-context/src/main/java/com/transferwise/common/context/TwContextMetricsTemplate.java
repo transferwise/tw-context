@@ -12,7 +12,7 @@ public class TwContextMetricsTemplate {
 
   public static final String METRIC_UNIQUE_ENTRYPOINTS = METRIC_PREFIX + ".entrypoints.unique";
   public static final String METRIC_UNIQUE_ENTRYPOINTS_LIMIT = METRIC_PREFIX + ".entrypoints.unique.limit";
-  public static final String METRIC_DEADLINE_REDUCED = METRIC_PREFIX + ".deadline.reduced";
+  public static final String METRIC_DEADLINE_EXTENDED = METRIC_PREFIX + ".deadline.extended";
   public static final String METRIC_CRITICALITY_CHANGED = METRIC_PREFIX + ".criticality.changed";
   public static final String METRIC_DEADLINE_EXCEEDED = METRIC_PREFIX + ".deadline.exceeded";
 
@@ -33,8 +33,8 @@ public class TwContextMetricsTemplate {
     Gauge.builder(METRIC_UNIQUE_ENTRYPOINTS_LIMIT, maxEntries).register(meterRegistry);
   }
 
-  public void registerDeadlineReduction(@NonNull String group, @NonNull String name, Criticality criticality) {
-    meterRegistry.counter(METRIC_DEADLINE_REDUCED, tagsFor(group, name, criticality)).increment();
+  public void registerDeadlineExtending(@NonNull String group, @NonNull String name, Criticality criticality) {
+    meterRegistry.counter(METRIC_DEADLINE_EXTENDED, tagsFor(group, name, criticality)).increment();
   }
 
   public void registerCriticalityChange(@NonNull String group, @NonNull String name, Criticality criticality) {

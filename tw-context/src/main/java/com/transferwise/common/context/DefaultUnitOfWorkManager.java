@@ -115,8 +115,7 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
         Instant currentDeadline = newUnitOfWork.getDeadline();
         if (currentDeadline != null && currentDeadline.isBefore(deadline)) {
           // Code smell we want to know about.
-          metricsTemplate.registerDeadlineReduction(group, name, criticality);
-          deadline = currentDeadline;
+          metricsTemplate.registerDeadlineExtending(group, name, criticality);
         }
         newUnitOfWork.setDeadline(deadline);
       }

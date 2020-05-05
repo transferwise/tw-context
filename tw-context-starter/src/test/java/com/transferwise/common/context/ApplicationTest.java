@@ -9,6 +9,8 @@ import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,19 @@ public class ApplicationTest {
   private UnitOfWorkManager unitOfWorkManager;
   @Autowired
   private MeterRegistry meterRegistry;
+
+  private TestClock testClock;
+
+  @BeforeEach
+  void setup() {
+    testClock = TestClock.createAndRegister();
+  }
+
+  @AfterEach
+  void cleanup() {
+    TestClock.reset();
+    meterRegistry.clear();
+  }
 
   @Test
   @Order(0)
@@ -71,17 +86,10 @@ public class ApplicationTest {
 
   @Test
   void deadlineExceededIsCorrectlyCounted() {
-    meterRegistry.getMeters().forEach(meter -> {
-      if (meter.getId().equals(TwContextMetricsTemplate.METRIC_DEADLINE_EXCEEDED)) {
-        meterRegistry.remove(meter);
-      }
-    });
     boolean deadlineExceeded = false;
     try {
-      unitOfWorkManager.createEntryPoint("TestGroup", "TestName").deadline(Instant.now().minusSeconds(100)).toContext().execute(() -> {
-        unitOfWorkManager.checkDeadLine("MyTest");
-      });
-
+      unitOfWorkManager.createEntryPoint("TestGroup", "TestName").deadline(Instant.now().minusSeconds(100)).toContext()
+          .execute(() -> unitOfWorkManager.checkDeadLine("MyTest"));
     } catch (DeadlineExceededException e) {
       deadlineExceeded = true;
       log.warn(e.getMessage());
@@ -91,4 +99,17 @@ public class ApplicationTest {
 
     assertThat(meterRegistry.get(TwContextMetricsTemplate.METRIC_DEADLINE_EXCEEDED).counter().count()).isEqualTo(1);
   }
+
+  @Test
+  void deadlineCanBeExpandedForCertainSpecialCases() {
+    unitOfWorkManager.createUnitOfWork().deadline(testClock.instant().plusSeconds(10)).toContext().execute(() -> {
+      assertThat(unitOfWorkManager.getUnitOfWork().getDeadline()).isEqualTo(testClock.instant().plusSeconds(10));
+      unitOfWorkManager.createUnitOfWork().deadline(testClock.instant().plusSeconds(30)).toContext().execute(() -> {
+        assertThat(unitOfWorkManager.getUnitOfWork().getDeadline()).isEqualTo(testClock.instant().plusSeconds(30));
+      });
+    });
+
+    assertThat(meterRegistry.get(TwContextMetricsTemplate.METRIC_DEADLINE_EXTENDED).counter().count()).isEqualTo(1);
+  }
+
 }
