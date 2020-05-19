@@ -224,11 +224,6 @@ public class TwContext {
     }
   }
 
-  public <T> T executeWithoutDetaching(@NonNull Supplier<T> supplier) {
-    attach();
-    return executeWithInterceptors(getWrappedSupplier(supplier));
-  }
-
   public void execute(@NonNull Runnable runnable) {
     TwContext previous = attach();
     try {
@@ -239,6 +234,11 @@ public class TwContext {
     } finally {
       detach(previous);
     }
+  }
+
+  public <T> T executeWithoutDetaching(@NonNull Supplier<T> supplier) {
+    attach();
+    return executeWithInterceptors(getWrappedSupplier(supplier));
   }
 
   public void executeWithoutDetaching(@NonNull Runnable runnable) {
