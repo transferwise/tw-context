@@ -100,4 +100,17 @@ public class TwContextTest {
     assertThat(MDC.get(testKey)).isNull();
   }
 
+  @Test
+  void testExecuteWithoutDetaching() {
+    TwContext context = TwContext.current().createSubContext();
+    String testKey = "testKey";
+    String testValue = "testValue";
+
+    context.put(testKey, testValue);
+    assertTrue(TwContext.current().isRoot());
+    context.executeWithoutDetaching(() -> {});
+    assertFalse(TwContext.current().isRoot());
+    assertEquals(testValue, TwContext.current().get(testKey));
+  }
+
 }
