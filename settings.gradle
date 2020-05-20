@@ -9,5 +9,6 @@ pluginManagement {
 
 include "tw-context"
 include "tw-context-starter"
+include "tw-context-ownership-starter"
 
 rootProject.name = "tw-context-root"

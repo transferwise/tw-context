@@ -1,0 +1,6 @@
+tw-context:
+  ownership:
+    entrypoint-to-owner-mappings:
+      - "Jobs:testJob1:webapp-reliability"
+      - "Web:/v1/profile/1 (GET):profile-service"
+    default-owner: "SRE" # lol, who else?
