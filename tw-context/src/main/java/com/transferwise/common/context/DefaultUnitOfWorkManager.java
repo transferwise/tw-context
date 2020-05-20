@@ -47,7 +47,7 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
 
     if (unitOfWork != null && unitOfWork.hasDeadlinePassed()) {
       metricsTemplate.registerDeadlineExceeded(context.getGroup(), context.getName(), unitOfWork.getCriticality(), sourceKey);
-      throw new DeadlineExceededException(unitOfWork.getDeadline());
+      throw new DeadlineExceededException(unitOfWork.getDeadline(), unitOfWork.getCreationTime());
     }
   }
 
