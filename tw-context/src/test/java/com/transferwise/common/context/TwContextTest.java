@@ -1,9 +1,6 @@
 package com.transferwise.common.context;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
@@ -14,30 +11,30 @@ public class TwContextTest {
   void testContextHierarchy() {
     TwContext context = TwContext.current().createSubContext();
 
-    assertFalse(context.isRoot());
-    assertTrue(context.getParent().isRoot());
+    assertThat(context.isRoot()).isFalse();
+    assertThat(context.getParent().isRoot()).isTrue();
 
     String testKey = "TestKey";
     context.put(testKey, "0");
 
-    assertEquals("0", context.get(testKey));
+    assertThat((String) context.get(testKey)).isEqualTo("0");
 
     context.execute(() -> {
-      assertEquals("0", context.get(testKey));
-      assertEquals(context, TwContext.current());
+      assertThat((String) context.get(testKey)).isEqualTo("0");
+      assertThat(TwContext.current()).isEqualTo(context);
 
       TwContext subContext = context.createSubContext();
-      assertEquals("0", subContext.get(testKey));
+      assertThat((String) subContext.get(testKey)).isEqualTo("0");
       subContext.put(testKey, "1");
-      assertEquals("1", subContext.get(testKey));
-      assertEquals("1", subContext.getNew(testKey));
-      assertEquals("0", context.get(testKey));
+      assertThat((String) subContext.get(testKey)).isEqualTo("1");
+      assertThat((String) subContext.getNew(testKey)).isEqualTo("1");
+      assertThat((String) context.get(testKey)).isEqualTo("0");
 
-      subContext.execute(() -> assertEquals("1", TwContext.current().get(testKey)));
-      assertEquals("0", TwContext.current().get(testKey));
+      subContext.execute(() -> assertThat((String) TwContext.current().get(testKey))).isEqualTo("1");
+      assertThat((String) TwContext.current().get(testKey)).isEqualTo("0");
     });
 
-    assertTrue(TwContext.current().isRoot());
+    assertThat(TwContext.current().isRoot()).isTrue();
   }
 
   @Test
