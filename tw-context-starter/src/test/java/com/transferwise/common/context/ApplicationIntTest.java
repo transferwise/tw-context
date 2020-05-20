@@ -1,8 +1,6 @@
 package com.transferwise.common.context;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.transferwise.common.baseutils.clock.TestClock;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -22,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = TestApplication.class)
 @TestMethodOrder(OrderAnnotation.class)
 @Slf4j
-public class ApplicationTest {
+public class ApplicationIntTest {
 
   @Autowired
   private UnitOfWorkManager unitOfWorkManager;
@@ -45,10 +43,10 @@ public class ApplicationTest {
   @Test
   @Order(0)
   void applicationIsConfigured() {
-    assertEquals("123", unitOfWorkManager.createEntryPoint("A", "B").toContext().execute(() -> "123"));
+    assertThat(unitOfWorkManager.createEntryPoint("A", "B").toContext().execute(() -> "123")).isEqualTo("123");
 
-    assertTrue(TwContext.getExecutionInterceptors().stream()
-        .anyMatch(i -> i instanceof TwContextUniqueEntryPointsLimitingInterceptor));
+    assertThat(TwContext.getExecutionInterceptors().stream()
+        .anyMatch(i -> i instanceof TwContextUniqueEntryPointsLimitingInterceptor)).isTrue();
 
     AtomicInteger genericCount = new AtomicInteger();
     for (int i = 0; i < 2000; i++) {
@@ -62,7 +60,7 @@ public class ApplicationTest {
       });
     }
 
-    assertEquals(1001, genericCount.get());
+    assertThat(genericCount.get()).isEqualTo(1001);
   }
 
   @Test
