@@ -1,10 +1,15 @@
 package com.transferwise.common.context;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.transferwise.common.baseutils.clock.TestClock;
 import io.micrometer.core.instrument.MeterRegistry;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
@@ -43,10 +48,10 @@ public class ApplicationIntTest {
   @Test
   @Order(0)
   void applicationIsConfigured() {
-    assertThat(unitOfWorkManager.createEntryPoint("A", "B").toContext().execute(() -> "123")).isEqualTo("123");
+    assertEquals("123", unitOfWorkManager.createEntryPoint("A", "B").toContext().execute(() -> "123"));
 
-    assertThat(TwContext.getExecutionInterceptors().stream()
-        .anyMatch(i -> i instanceof TwContextUniqueEntryPointsLimitingInterceptor)).isTrue();
+    assertTrue(TwContext.getExecutionInterceptors().stream()
+        .anyMatch(i -> i instanceof TwContextUniqueEntryPointsLimitingInterceptor));
 
     AtomicInteger genericCount = new AtomicInteger();
     for (int i = 0; i < 2000; i++) {
@@ -60,7 +65,7 @@ public class ApplicationIntTest {
       });
     }
 
-    assertThat(genericCount.get()).isEqualTo(1001);
+    assertEquals(1001, genericCount.get());
   }
 
   @Test
@@ -110,4 +115,22 @@ public class ApplicationIntTest {
     assertThat(meterRegistry.get(TwContextMetricsTemplate.METRIC_DEADLINE_EXTENDED).counter().count()).isEqualTo(1);
   }
 
+
+  @Test
+  void deadlineExceededExceptionHasExpectedMessage() {
+    Instant start = OffsetDateTime.parse("2020-05-20T12:37:21.532Z").toInstant();
+    Instant deadline = OffsetDateTime.parse("2020-05-20T12:37:23.531Z").toInstant();
+
+    testClock.set(start.plusSeconds(5));
+    assertThat(new DeadlineExceededException(deadline).getMessage()).isEqualTo("Deadline exceeded 3 seconds 1 milliseconds ago.");
+    assertThat(new DeadlineExceededException(deadline, start).getMessage())
+        .isEqualTo("Deadline exceeded 3 seconds 1 milliseconds ago. Time taken in current unit of work was 5 seconds.");
+
+    testClock.set(start);
+    assertThatThrownBy(() -> unitOfWorkManager.createUnitOfWork().deadline(deadline).toContext().execute(() -> {
+      testClock.tick(Duration.ofSeconds(3));
+      unitOfWorkManager.checkDeadLine("Test");
+    })).isInstanceOf(DeadlineExceededException.class)
+        .hasMessage("Deadline exceeded 1 seconds 1 milliseconds ago. Time taken in current unit of work was 3 seconds.");
+  }
 }

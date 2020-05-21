@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] - 2020-05-20
+### Changed
+- Deadline exception also contains information how long has passed from the start of the unit of work.
+In servlet case it means from beginning of the request.
+
 ## [0.2.1] - 2020-05-05
 ### Changed
 - Deadline can be now extended. Even when this would be very bad practice, it is sometimes needed during migration and optimization process.
