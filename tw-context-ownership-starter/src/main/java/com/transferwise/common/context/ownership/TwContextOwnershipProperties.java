@@ -29,7 +29,7 @@ public class TwContextOwnershipProperties {
    * 
    * <p>Usually the owner value is a Github team's name.
    * 
-   * <p>Example: {@code Web:/v1/profiles/1 (GET):profile-service}
+   * <p>Example: {@code Web:/v1/profiles/{profileId} (GET):profile-service}
    */
   private List<String> entryPointToOwnerMappings = new ArrayList<>();
 

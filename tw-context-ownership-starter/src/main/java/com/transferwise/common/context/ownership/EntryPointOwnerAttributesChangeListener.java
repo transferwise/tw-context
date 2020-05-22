@@ -40,28 +40,32 @@ public class EntryPointOwnerAttributesChangeListener implements TwContextAttribu
         if (properties.getDefaultOwner() != null) {
           // If owner was already set programmatically by `TwContext.setOwner`, we don't mess with that.
           if (context.getOwner() != null) {
-            if (properties.isWarnAboutEntryPointsWithoutOwner() && (!TwContext.GROUP_GENERIC.equals(epGroup) || !TwContext.NAME_GENERIC
-                .equals(epName))) {
-              Pair<String, String> entrypoint = Pair.of(epGroup, epName);
-              boolean shouldLog = false;
-              defaultOwnersLock.lock();
-              try {
-                if (!defaultOwners.containsKey(entrypoint)) {
-                  shouldLog = true;
-                  defaultOwners.put(entrypoint, Boolean.TRUE);
-                }
-              } finally {
-                defaultOwnersLock.unlock();
-              }
-              if (shouldLog) {
-                log.warn("Entrypoint '" + epGroup + ":" + epName + "' does not have an owner.");
-              }
-            }
+            warnAboutDefaultOwnership(epGroup, epName);
             context.setOwner(properties.getDefaultOwner());
           }
         }
       } else {
         context.setOwner(owner);
+      }
+    }
+  }
+
+  private void warnAboutDefaultOwnership(String epGroup, String epName) {
+    if (properties.isWarnAboutEntryPointsWithoutOwner() && (!TwContext.GROUP_GENERIC.equals(epGroup) || !TwContext.NAME_GENERIC
+        .equals(epName))) {
+      Pair<String, String> entrypoint = Pair.of(epGroup, epName);
+      boolean shouldLog = false;
+      defaultOwnersLock.lock();
+      try {
+        if (!defaultOwners.containsKey(entrypoint)) {
+          shouldLog = true;
+          defaultOwners.put(entrypoint, Boolean.TRUE);
+        }
+      } finally {
+        defaultOwnersLock.unlock();
+      }
+      if (shouldLog) {
+        log.warn("Entrypoint '" + epGroup + ":" + epName + "' does not have an owner.");
       }
     }
   }

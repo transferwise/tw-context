@@ -12,15 +12,14 @@ public class ConfigurationBasedEntryPointOwnerProviderTest {
     TwContextOwnershipProperties props = new TwContextOwnershipProperties();
     props.setValidateOwners(false);
     props.getEntryPointToOwnerMappings().add("Web:/v1:Kristo");
-    props.getEntryPointToOwnerMappings().add("Web:/v1/profile1 \\:GET:Yurii");
-    props.getEntryPointToOwnerMappings().add("Web:/v1/profile/2:Lauri\\\\");
+    props.getEntryPointToOwnerMappings().add("Web:/v1/quote/{quoteId} \\:GET:Yurii");
+    props.getEntryPointToOwnerMappings().add("Web:/v1/profile/{profileId}:Lauri\\\\");
 
-    ConfigurationBasedEntryPointOwnerProvider provider = new ConfigurationBasedEntryPointOwnerProvider();
-    provider.setProperties(props);
+    ConfigurationBasedEntryPointOwnerProvider provider = createProvider(props);
 
     assertThat(provider.getOwner("Web", "/v1")).isEqualTo("Kristo");
-    assertThat(provider.getOwner("Web", "/v1/profile1 :GET")).isEqualTo("Yurii");
-    assertThat(provider.getOwner("Web", "/v1/profile/2")).isEqualTo("Lauri\\");
+    assertThat(provider.getOwner("Web", "/v1/quote/{quoteId} :GET")).isEqualTo("Yurii");
+    assertThat(provider.getOwner("Web", "/v1/profile/{profileId}")).isEqualTo("Lauri\\");
     assertThat(provider.getOwner("a", "b")).isNull();
   }
 
@@ -45,9 +44,15 @@ public class ConfigurationBasedEntryPointOwnerProviderTest {
     props.setValidateOwners(validate);
     props.getEntryPointToOwnerMappings().add(configLine);
 
+    ConfigurationBasedEntryPointOwnerProvider provider = createProvider(props);
+
+    return provider;
+  }
+
+  protected ConfigurationBasedEntryPointOwnerProvider createProvider(TwContextOwnershipProperties props) {
     ConfigurationBasedEntryPointOwnerProvider provider = new ConfigurationBasedEntryPointOwnerProvider();
     provider.setProperties(props);
-
+    provider.init();
     return provider;
   }
 }

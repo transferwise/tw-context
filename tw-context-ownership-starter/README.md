@@ -1,6 +1,6 @@
 # tw-context-ownership-starter
 
-An implementation to automatically get `TwContext` `owner` attribute set, based on which entrypoint the code is running in.
+An implementation to automatically set the  `TwContext`'s `owner` attribute, based in which entrypoint the code is running in.
 
 By default it is configured to use Github teams names as `owner` value.
 

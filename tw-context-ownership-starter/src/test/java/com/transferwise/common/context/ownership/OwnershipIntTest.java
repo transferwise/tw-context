@@ -24,7 +24,7 @@ public class OwnershipIntTest {
     TwContext twContext = TwContext.current().createSubContext().asEntryPoint("Jobs", "testJob1");
     assertThat(twContext.getOwner()).isEqualTo("webapp-reliability");
 
-    twContext.setName("Web", "/v1/profile/1 (GET)");
+    twContext.setName("Web", "/v1/profile/{profileId} (GET)");
     assertThat(twContext.getOwner()).isEqualTo("profile-service");
 
     twContext.setName("Unknown", "Unknown");

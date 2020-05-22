@@ -17,31 +17,19 @@ public class ConfigurationBasedEntryPointOwnerProvider implements EntryPointOwne
   private TwContextOwnershipProperties properties;
 
   private volatile Map<String, Map<String, String>> groupNameOwnerMap;
-  
+
   private final Pattern componentsSeparatingRegex = Pattern.compile("(?:\\\\.|[^:\\\\]++)*");
 
   @PostConstruct
   public void init() {
-    // Fail fast on misconfiguration.
-    getGroupNameOwnerMap();
+    groupNameOwnerMap = properties.getEntryPointToOwnerMappings().stream().map(this::getParts)
+        .collect(Collectors.groupingBy(this::getGroupPart, Collectors.toMap(this::getNamePart, this::getOwnerPart)));
   }
 
   @Override
   public String getOwner(String entryPointGroup, String entryPointName) {
-    Map<String, String> groupMap = getGroupNameOwnerMap().get(entryPointGroup);
+    Map<String, String> groupMap = groupNameOwnerMap.get(entryPointGroup);
     return groupMap == null ? null : groupMap.get(entryPointName);
-  }
-
-  protected Map<String, Map<String, String>> getGroupNameOwnerMap() {
-    if (groupNameOwnerMap == null) {
-      synchronized (this) {
-        if (groupNameOwnerMap == null) {
-          groupNameOwnerMap = properties.getEntryPointToOwnerMappings().stream().map(this::getParts)
-              .collect(Collectors.groupingBy(this::getGroupPart, Collectors.toMap(this::getNamePart, this::getOwnerPart)));
-        }
-      }
-    }
-    return groupNameOwnerMap;
   }
 
   protected String getGroupPart(String[] parts) {

@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Please keep alphabetical order.
  *
- * <p>It is quite safe to remove redundant teams from here, all the code using TwEnum has to consider it.
+ * <p>It is quite safe to remove redundant teams from here, all the code using TwTeam has to consider it.
  *
  * <p>Functionality can be expanded later, for example for services needing a team's slack channel for automatic notifications.
  */
