@@ -32,4 +32,9 @@ public class TwContextOwnershipProperties {
    * <p>Example: {@code Web:/v1/profiles/1 (GET):profile-service}
    */
   private List<String> entryPointToOwnerMappings = new ArrayList<>();
+
+  /**
+   * Entrypoint for which we can not determine an owner will be logged out as a warning, once per application runtime.
+   */
+  private boolean warnAboutEntryPointsWithoutOwners = true;
 }
