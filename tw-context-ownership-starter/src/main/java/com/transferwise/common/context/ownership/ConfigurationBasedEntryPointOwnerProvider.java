@@ -17,7 +17,8 @@ public class ConfigurationBasedEntryPointOwnerProvider implements EntryPointOwne
   private TwContextOwnershipProperties properties;
 
   private volatile Map<String, Map<String, String>> groupNameOwnerMap;
-  private Pattern componentsSeparatingRegex = Pattern.compile("(?:\\\\.|[^:\\\\]++)*");
+  
+  private final Pattern componentsSeparatingRegex = Pattern.compile("(?:\\\\.|[^:\\\\]++)*");
 
   @PostConstruct
   public void init() {

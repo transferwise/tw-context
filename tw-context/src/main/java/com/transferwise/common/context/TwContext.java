@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -30,8 +31,8 @@ public class TwContext {
   public static final String MDC_KEY_EP_OWNER = "tw_entrypoint_owner";
 
   private static final ThreadLocal<TwContext> contextTl = new ThreadLocal<>();
-  private static final List<TwContextExecutionInterceptor> interceptors = new CopyOnWriteArrayList<>();
-  private static final List<TwContextAttributeChangeListener> attributeChangeListeners = new CopyOnWriteArrayList<>();
+  private static final Set<TwContextExecutionInterceptor> interceptors = new CopyOnWriteArraySet<>();
+  private static final Set<TwContextAttributeChangeListener> attributeChangeListeners = new CopyOnWriteArraySet<>();
   private static final TwContext ROOT_CONTEXT = new TwContext(null, true);
   private static final RateLimiter throwableLoggingRateLimiter = RateLimiter.create(2);
 
@@ -44,12 +45,24 @@ public class TwContext {
     interceptors.add(interceptor);
   }
 
+  public static boolean removeExecutionInterceptor(@NonNull TwContextExecutionInterceptor interceptor) {
+    return interceptors.remove(interceptor);
+  }
+
+  public static Set<TwContextExecutionInterceptor> getExecutionInterceptors() {
+    return interceptors;
+  }
+
   public static void addAttributeChangeListener(@NonNull TwContextAttributeChangeListener listener) {
     attributeChangeListeners.add(listener);
   }
 
-  public static List<TwContextExecutionInterceptor> getExecutionInterceptors() {
-    return interceptors;
+  public static boolean removeAttributeChangeListener(TwContextAttributeChangeListener listener) {
+    return attributeChangeListeners.remove(listener);
+  }
+
+  public static Set<TwContextAttributeChangeListener> getAttributeChangeListeners() {
+    return attributeChangeListeners;
   }
 
   public static void putCurrentMdc(@NonNull String key, String value) {

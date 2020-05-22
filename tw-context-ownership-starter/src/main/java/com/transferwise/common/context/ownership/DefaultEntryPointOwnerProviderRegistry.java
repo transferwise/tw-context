@@ -26,7 +26,8 @@ public class DefaultEntryPointOwnerProviderRegistry implements EntryPointOwnerPr
         }
       } catch (Throwable t) {
         if (errorLogRateLimiter.tryAcquire()) {
-          log.error("Determing entryPoint's '" + entryPointGroup + ":" + entryPointName + "' owner failed.", t);
+          log.error("Determining entryPoint's '" + entryPointGroup + ":" + entryPointName + "' owner failed. "
+              + entryPointOwnerProvider.getClass().getName() + " should handle all it's own errors.", t);
         }
       }
     }
