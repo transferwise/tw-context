@@ -35,6 +35,8 @@ jobs:
           path: ./tw-context/build/test-results/
       - store_test_results:
           path: ./tw-context-starter/build/test-results/
+      - store_test_results:
+          path: ./tw-context-ownership-starter/build/test-results/
       - persist_to_workspace:
           root: .
           paths:
