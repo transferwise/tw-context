@@ -36,5 +36,5 @@ public class TwContextOwnershipProperties {
   /**
    * Entrypoint for which we can not determine an owner will be logged out as a warning, once per application runtime.
    */
-  private boolean warnAboutEntryPointsWithoutOwners = true;
+  private boolean warnAboutEntryPointsWithoutOwner = true;
 }

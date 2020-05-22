@@ -40,7 +40,7 @@ public class EntryPointOwnerAttributesChangeListener implements TwContextAttribu
         if (properties.getDefaultOwner() != null) {
           // If owner was already set programmatically by `TwContext.setOwner`, we don't mess with that.
           if (context.getOwner() != null) {
-            if (properties.isWarnAboutEntryPointsWithoutOwners() && (!TwContext.GROUP_GENERIC.equals(epGroup) || !TwContext.NAME_GENERIC
+            if (properties.isWarnAboutEntryPointsWithoutOwner() && (!TwContext.GROUP_GENERIC.equals(epGroup) || !TwContext.NAME_GENERIC
                 .equals(epName))) {
               Pair<String, String> entrypoint = Pair.of(epGroup, epName);
               boolean shouldLog = false;
