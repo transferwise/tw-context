@@ -6,8 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import lombok.Getter;
@@ -31,8 +30,8 @@ public class TwContext {
   public static final String MDC_KEY_EP_OWNER = "tw_entrypoint_owner";
 
   private static final ThreadLocal<TwContext> contextTl = new ThreadLocal<>();
-  private static final Set<TwContextExecutionInterceptor> interceptors = new CopyOnWriteArraySet<>();
-  private static final Set<TwContextAttributeChangeListener> attributeChangeListeners = new CopyOnWriteArraySet<>();
+  private static final List<TwContextExecutionInterceptor> interceptors = new CopyOnWriteArrayList<>();
+  private static final List<TwContextAttributeChangeListener> attributeChangeListeners = new CopyOnWriteArrayList<>();
   private static final TwContext ROOT_CONTEXT = new TwContext(null, true);
   private static final RateLimiter throwableLoggingRateLimiter = RateLimiter.create(2);
 
@@ -49,7 +48,7 @@ public class TwContext {
     return interceptors.remove(interceptor);
   }
 
-  public static Set<TwContextExecutionInterceptor> getExecutionInterceptors() {
+  public static List<TwContextExecutionInterceptor> getExecutionInterceptors() {
     return interceptors;
   }
 
@@ -61,7 +60,7 @@ public class TwContext {
     return attributeChangeListeners.remove(listener);
   }
 
-  public static Set<TwContextAttributeChangeListener> getAttributeChangeListeners() {
+  public static List<TwContextAttributeChangeListener> getAttributeChangeListeners() {
     return attributeChangeListeners;
   }
 
