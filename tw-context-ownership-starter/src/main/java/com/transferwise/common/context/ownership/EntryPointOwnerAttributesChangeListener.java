@@ -17,7 +17,10 @@ public class EntryPointOwnerAttributesChangeListener implements TwContextAttribu
       String owner = entryPointOwnerProviderRegistry.getOwner(context.getGroup(), context.getName());
       if (owner == null) {
         if (properties.getDefaultOwner() != null) {
-          context.setOwner(properties.getDefaultOwner());
+          // If owner was already set programmatically by `TwContext.setOwner`, we don't mess with that.
+          if (context.getOwner() != null) {
+            context.setOwner(properties.getDefaultOwner());
+          }
         }
       } else {
         context.setOwner(owner);
