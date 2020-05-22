@@ -65,4 +65,13 @@ public class EntryPointOwnerAttributesChangeListener implements TwContextAttribu
       }
     }
   }
+
+  protected void clearDefaultOwners() {
+    defaultOwnersLock.lock();
+    try {
+      defaultOwners.clear();
+    } finally {
+      defaultOwnersLock.unlock();
+    }
+  }
 }
