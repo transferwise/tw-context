@@ -36,12 +36,12 @@ public class ApplicationIntTest {
 
   @BeforeEach
   void setup() {
-    testClock = TestClock.createAndRegister();
+    TwContextClockHolder.setClock(testClock = new TestClock());
   }
 
   @AfterEach
   void cleanup() {
-    TestClock.reset();
+    TwContextClockHolder.reset();
     meterRegistry.clear();
   }
 
@@ -71,13 +71,11 @@ public class ApplicationIntTest {
   @Test
   @Order(1)
   void mdcValuesAreCorrectlySet() {
-    TestClock clock = TestClock.createAndRegister();
-
     String testGroup = "TestGroup";
     String testName = "TestName";
 
     unitOfWorkManager.createEntryPoint(testGroup, testName)
-        .deadline(clock.instant()).criticality(Criticality.CRITICAL_PLUS).toContext()
+        .deadline(testClock.instant()).criticality(Criticality.CRITICAL_PLUS).toContext()
         .execute(() -> {
           assertThat(MDC.get(TwContext.MDC_KEY_EP_NAME)).isEqualTo(testName);
           assertThat(MDC.get(TwContext.MDC_KEY_EP_GROUP)).isEqualTo(testGroup);

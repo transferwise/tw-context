@@ -2,7 +2,6 @@ package com.transferwise.common.context;
 
 import static com.transferwise.common.context.UnitOfWork.TW_CONTEXT_KEY;
 
-import com.transferwise.common.baseutils.clock.ClockHolder;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Duration;
 import java.time.Instant;
@@ -71,7 +70,7 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
 
     @Override
     public Builder deadline(Duration duration) {
-      this.deadline = ClockHolder.getClock().instant().plus(duration);
+      this.deadline = TwContextClockHolder.getClock().instant().plus(duration);
       return this;
     }
 

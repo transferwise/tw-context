@@ -1,6 +1,5 @@
 package com.transferwise.common.context;
 
-import com.transferwise.common.baseutils.clock.ClockHolder;
 import java.time.Instant;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,10 +14,10 @@ public class UnitOfWork {
   private Criticality criticality;
   private Instant deadline;
   @NonNull
-  private Instant creationTime = ClockHolder.getClock().instant();
+  private Instant creationTime = TwContextClockHolder.getClock().instant();
 
   public boolean hasDeadlinePassed() {
-    return deadline != null && deadline.isBefore(ClockHolder.getClock().instant());
+    return deadline != null && deadline.isBefore(TwContextClockHolder.getClock().instant());
   }
 
 }

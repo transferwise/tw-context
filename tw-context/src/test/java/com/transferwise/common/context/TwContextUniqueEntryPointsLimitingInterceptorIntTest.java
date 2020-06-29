@@ -3,7 +3,6 @@ package com.transferwise.common.context;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.transferwise.common.baseutils.ExceptionUtils;
-import com.transferwise.common.baseutils.clock.ClockHolder;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.util.concurrent.CountDownLatch;
@@ -24,7 +23,7 @@ public class TwContextUniqueEntryPointsLimitingInterceptorIntTest {
     MeterRegistry meterRegistry = new SimpleMeterRegistry();
     TwContext.addExecutionInterceptor(new TwContextUniqueEntryPointsLimitingInterceptor(meterRegistry, 1));
 
-    final long startTimeMs = ClockHolder.getClock().millis();
+    final long startTimeMs = TwContextClockHolder.getClock().millis();
 
     CountDownLatch countDownLatch = new CountDownLatch(1);
     CountDownLatch countDownLatch1 = new CountDownLatch(1);
@@ -55,7 +54,7 @@ public class TwContextUniqueEntryPointsLimitingInterceptorIntTest {
     t1.join();
     t0.join();
 
-    assertThat(ClockHolder.getClock().millis() - startTimeMs).isLessThan(sleepTimeMs / 2);
+    assertThat(TwContextClockHolder.getClock().millis() - startTimeMs).isLessThan(sleepTimeMs / 2);
   }
 
   /**

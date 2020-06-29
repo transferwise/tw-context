@@ -1,9 +1,7 @@
 package com.transferwise.common.context;
 
-import com.transferwise.common.baseutils.clock.ClockHolder;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.concurrent.TimeUnit;
 
 public class DeadlineExceededException extends RuntimeException {
 
@@ -14,12 +12,12 @@ public class DeadlineExceededException extends RuntimeException {
   }
 
   private static String createMessage(Instant deadline, Instant unitOfWorkCreationTime) {
-    long sinceDeadlineExceededMillis = Math.max(0, ClockHolder.getClock().millis() - deadline.toEpochMilli());
+    long sinceDeadlineExceededMillis = Math.max(0, TwContextClockHolder.getClock().millis() - deadline.toEpochMilli());
     String formattedDeadline = DurationFormatUtils.formatDuration(Duration.ofMillis(sinceDeadlineExceededMillis));
     if (unitOfWorkCreationTime == null) {
       return "Deadline exceeded " + formattedDeadline + " ago.";
     } else {
-      long durationMillis = Math.max(0, ClockHolder.getClock().millis() - unitOfWorkCreationTime.toEpochMilli());
+      long durationMillis = Math.max(0, TwContextClockHolder.getClock().millis() - unitOfWorkCreationTime.toEpochMilli());
       String formattedDuration = DurationFormatUtils.formatDuration(Duration.ofMillis(durationMillis));
       return "Deadline exceeded " + formattedDeadline + " ago. Time taken in current unit of work was " + formattedDuration + ".";
     }
