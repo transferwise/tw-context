@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2020-08-24
+### Added
+- Added properties applying to all timeouts.
+The idea, is that timeout values set for production can often be too low for development environments, but asking engineers to always set timeouts
+with if statements ("if develenv then..."), in every single client, is not feasible.
+So instead, we define properties `tw-context.core.timeoutMultiplier` and `tw-context.core.timeoutAdditive`, which can be set globally,
+lets say as environment variables in custom environment.
+Also, an application is able to overwrite `TimeoutCustomizer` bean for more granual control.
+
 ## [0.4.0] - 2020-06-30
 ### Changed
 - Removed 0.3.2 from repositories as minor version needed to be changed instead of patch one.
