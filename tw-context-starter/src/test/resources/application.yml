@@ -1,3 +1,5 @@
+spring.profiles: timeout-int-test
+
 tw-context.core:
   timeout-additive: 2s
   timeout-multiplier: 1.5
