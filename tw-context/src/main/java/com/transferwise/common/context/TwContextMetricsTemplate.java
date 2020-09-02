@@ -18,6 +18,7 @@ public class TwContextMetricsTemplate {
 
   public static final String TAG_EP_NAME = "epName";
   public static final String TAG_EP_GROUP = "epGroup";
+  public static final String TAG_EP_OWNER = "epOwner";
   public static final String TAG_CRITICALITY = "criticality";
   public static final String TAG_SOURCE = "source";
   public static final String TAG_VALUE_UNKNOWN = "unknown";
@@ -34,18 +35,19 @@ public class TwContextMetricsTemplate {
   }
 
   public void registerDeadlineExtending(@NonNull String group, @NonNull String name, Criticality criticality) {
-    meterRegistry.counter(METRIC_DEADLINE_EXTENDED, tagsFor(group, name, criticality)).increment();
+    meterRegistry.counter(METRIC_DEADLINE_EXTENDED, tagsFor(group, name, null, criticality)).increment();
   }
 
   public void registerCriticalityChange(@NonNull String group, @NonNull String name, Criticality criticality) {
-    meterRegistry.counter(METRIC_CRITICALITY_CHANGED, tagsFor(group, name, criticality)).increment();
+    meterRegistry.counter(METRIC_CRITICALITY_CHANGED, tagsFor(group, name, null, criticality)).increment();
   }
 
-  public void registerDeadlineExceeded(@NonNull String group, @NonNull String name, Criticality criticality, String source) {
-    meterRegistry.counter(METRIC_DEADLINE_EXCEEDED, tagsFor(group, name, criticality).and(TAG_SOURCE, source)).increment();
+  public void registerDeadlineExceeded(@NonNull String group, @NonNull String name, @NonNull String owner, Criticality criticality, String source) {
+    meterRegistry.counter(METRIC_DEADLINE_EXCEEDED, tagsFor(group, name, owner, criticality).and(TAG_SOURCE, source)).increment();
   }
 
-  private Tags tagsFor(String group, String name, Criticality criticality) {
-    return Tags.of(TAG_EP_GROUP, group, TAG_EP_NAME, name, TAG_CRITICALITY, criticality == null ? TAG_VALUE_UNKNOWN : criticality.name());
+  private Tags tagsFor(@NonNull String group, @NonNull String name, String owner, Criticality criticality) {
+    return Tags.of(TAG_EP_GROUP, group, TAG_EP_NAME, name, TAG_EP_OWNER, owner == null ? "Generic" : owner, TAG_CRITICALITY,
+        criticality == null ? TAG_VALUE_UNKNOWN : criticality.name());
   }
 }
