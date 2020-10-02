@@ -46,6 +46,14 @@ public class TwContextMetricsTemplate {
     meterRegistry.counter(METRIC_DEADLINE_EXCEEDED, tagsFor(group, name, owner, criticality).and(TAG_SOURCE, source)).increment();
   }
 
+  /**
+   * Deprecated, but lets keep it around for 2 months, as older (tw-service-comms) libs may be using it.
+   */
+  @Deprecated
+  public void registerDeadlineExceeded(@NonNull String group, @NonNull String name, Criticality criticality, String source) {
+    meterRegistry.counter(METRIC_DEADLINE_EXCEEDED, tagsFor(group, name, null, criticality).and(TAG_SOURCE, source)).increment();
+  }
+
   private Tags tagsFor(@NonNull String group, @NonNull String name, String owner, Criticality criticality) {
     return Tags.of(TAG_EP_GROUP, group, TAG_EP_NAME, name, TAG_EP_OWNER, owner == null ? "Generic" : owner, TAG_CRITICALITY,
         criticality == null ? TAG_VALUE_UNKNOWN : criticality.name());
