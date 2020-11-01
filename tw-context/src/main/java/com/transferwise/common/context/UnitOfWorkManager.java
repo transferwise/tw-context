@@ -5,13 +5,16 @@ import java.time.Instant;
 import lombok.NonNull;
 
 public interface UnitOfWorkManager {
-  Builder createEntryPoint(String group, String name);
+
+  Builder createEntryPoint(@NonNull String group, @NonNull String name);
+
+  Builder createEntryPoint(@NonNull String group, @NonNull String name, String owner);
 
   Builder createUnitOfWork();
 
   UnitOfWork getUnitOfWork();
 
-  UnitOfWork getUnitOfWork(TwContext context);
+  UnitOfWork getUnitOfWork(@NonNull TwContext context);
 
   void checkDeadLine(String sourceKey);
 
