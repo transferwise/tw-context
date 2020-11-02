@@ -6,7 +6,8 @@ ext.artifactoryPassword = project.hasProperty("artifactoryPassword") ? project.a
 ext.projectGitHubRepoName = "tw-context"
 ext.projectScmUrl = "https://github.com/transferwise/${projectGitHubRepoName}"
 ext.projectScmConnection = "scm:git:git://github.com/transferwise/${projectGitHubRepoName}.git"
-ext.springBootVersion = "2.2.4.RELEASE"
+
+apply from: "../build.libraries.gradle"
 
 buildscript {
     repositories {
@@ -33,21 +34,23 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
-    testAnnotationProcessor(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
-    compileOnly(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
-    implementation(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
-    testImplementation(platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}"))
+    annotationProcessor(platform(libraries.springBootDependencies))
+    testAnnotationProcessor(platform(libraries.springBootDependencies))
+    compileOnly(platform(libraries.springBootDependencies))
+    implementation(platform(libraries.springBootDependencies))
+    testImplementation(platform(libraries.springBootDependencies))
 
-    annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor(libraries.lombok)
+    annotationProcessor(libraries.springBootConfigurationProcessor)
 
-    compileOnly("org.projectlombok:lombok")
+    compileOnly(libraries.lombok)
+    compileOnly(libraries.springBootConfigurationProcessor)
 
-    testAnnotationProcessor("org.projectlombok:lombok")
-    testImplementation("org.projectlombok:lombok")
-    testImplementation("ch.qos.logback:logback-classic")
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation 'org.assertj:assertj-core'
+    testAnnotationProcessor(libraries.lombok)
+    testImplementation(libraries.lombok)
+    testImplementation(libraries.logbackClassic)
+    testImplementation(libraries.junitJupiter)
+    testImplementation(libraries.assertjCore)
 }
 
 java {
@@ -175,14 +178,6 @@ tasks.withType(Checkstyle) {
         xml.enabled false
         html.enabled true
     }
-}
-
-private def getCheckstyleConfig() {
-    def checkstyleJar = project.configurations.checkstyle.find({
-        return it.name.contains("checkstyle")
-    })
-
-    return resources.text.fromArchiveEntry(checkstyleJar, "google_checks.xml")
 }
 
 task addTag(type: Exec) {

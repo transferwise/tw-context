@@ -127,6 +127,10 @@ public class TwContext {
     return getNew(NAME_KEY) != null;
   }
 
+  public boolean isEntryPoint() {
+    return get(NAME_KEY) != null;
+  }
+
   public void putMdc(@NonNull String key, String value) {
     mdc.put(key, value);
   }

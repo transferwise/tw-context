@@ -5,11 +5,11 @@ ext.projectArtifactName = "tw-context"
 apply from: '../build.common.gradle'
 
 dependencies {
-    implementation("com.newrelic.agent.java:newrelic-api:5.10.0")
-    implementation("org.apache.commons:commons-lang3")
-    implementation("com.transferwise.common:tw-base-utils:1.2.8")
-    implementation("org.slf4j:slf4j-api")
-    implementation("com.google.guava:guava:29.0-jre")
+    implementation libraries.newrelicApi
+    implementation libraries.commonsLang3
+    implementation libraries.twBaseUtils
+    implementation libraries.slf4jApi
+    implementation libraries.guava
 
-    api("io.micrometer:micrometer-core")
+    api libraries.micrometerCore
 }

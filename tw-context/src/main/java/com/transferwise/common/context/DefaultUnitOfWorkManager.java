@@ -17,12 +17,17 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
 
   @Override
   public Builder createEntryPoint(@NonNull String group, @NonNull String name) {
-    return new DefaultBuilder(group, name);
+    return new DefaultBuilder(group, name, null);
+  }
+
+  @Override
+  public Builder createEntryPoint(@NonNull String group, @NonNull String name, String owner) {
+    return new DefaultBuilder(group, name, owner);
   }
 
   @Override
   public Builder createUnitOfWork() {
-    return new DefaultBuilder(null, null);
+    return new DefaultBuilder(null, null, null);
   }
 
   @Override
@@ -56,10 +61,12 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
     private final String entryPointName;
     private Instant deadline;
     private Criticality criticality;
+    private String owner;
 
-    public DefaultBuilder(String entryPointGroup, String entryPointName) {
+    public DefaultBuilder(String entryPointGroup, String entryPointName, String owner) {
       this.entryPointGroup = entryPointGroup;
       this.entryPointName = entryPointName;
+      this.owner = owner;
     }
 
     @Override
@@ -101,6 +108,10 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
       }
       if (name == null) {
         throw new IllegalStateException("Unit of Work has no Name defined.");
+      }
+
+      if (owner != null) {
+        context.setOwner(owner);
       }
 
       UnitOfWork currentUnitOfWork = getUnitOfWork(context);

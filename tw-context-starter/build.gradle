@@ -5,13 +5,11 @@ ext.projectArtifactName = "tw-context-starter"
 apply from: '../build.common.gradle'
 
 dependencies {
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
-    implementation("com.newrelic.agent.java:newrelic-api:5.10.0")
+    implementation libraries.springBootAutoconfigure
+    implementation libraries.newrelicApi
     api project(":tw-context:")
 
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-actuator'
-    testImplementation("com.transferwise.common:tw-base-utils:1.2.8")
+    testImplementation libraries.springBootStarterTest
+    testImplementation libraries.springBootStarterActuator
+    testImplementation libraries.twBaseUtils
 }

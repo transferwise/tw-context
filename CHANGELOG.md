@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2020-09-31
+### Added
+- `UnitOfWorkManager.createEntryPoint` has method with `owner` attribute.
+- `TwContext.isEntrypoint()` tells if we are running under some entrypoint.
+
+### Changed
+- Upgraded external libs.
+
 ## [0.6.1] - 2020-09-02
 ### Added
 - Restored `com.transferwise.common.context.TwContextMetricsTemplate.registerDeadlineExceeded`
@@ -32,7 +40,7 @@ Also, an application is able to overwrite `TimeoutCustomizer` bean for more gran
 
 ## [0.3.0] - 2020-05-20
 ### Added
-- TwContext now has entry point "Owner" as first class citizen, together with name and group.  
+- TwContext now has entry point "Owner" as first class citizen, together with name and group.
 
 - tw-context-ownership-starter module.
 A library to automatically set entry point owner, based on configuration or "handler" classes.
