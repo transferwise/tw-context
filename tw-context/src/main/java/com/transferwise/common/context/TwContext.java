@@ -124,6 +124,13 @@ public class TwContext {
   }
 
   public boolean isNewEntryPoint() {
+    return isNewEntryPoint(false);
+  }
+
+  public boolean isNewEntryPoint(boolean outmost) {
+    if (outmost) {
+      return getNew(NAME_KEY) != null && parent.get(NAME_KEY) == null;
+    }
     return getNew(NAME_KEY) != null;
   }
 
@@ -274,7 +281,7 @@ public class TwContext {
     }
   }
 
-  private <T> T executeWithInterceptors(Supplier<T> supplier) {
+  public <T> T executeWithInterceptors(Supplier<T> supplier) {
     List<TwContextExecutionInterceptor> applicableInterceptors = new ArrayList<>();
     for (TwContextExecutionInterceptor interceptor : TwContext.interceptors) {
       if (interceptor.applies(this)) {

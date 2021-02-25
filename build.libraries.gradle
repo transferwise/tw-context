@@ -1,12 +1,11 @@
 ext {
-    springBootVersion = "2.3.4.RELEASE"
-
     libraries = [
             // version defined
             commonsText                     : 'org.apache.commons:commons-text:1.9',
-            guava                           : 'com.google.guava:guava:30.0-jre',
-            newrelicApi                     : 'com.newrelic.agent.java:newrelic-api:6.1.0',
-            springBootDependencies          : "org.springframework.boot:spring-boot-dependencies:${springBootVersion}",
+            guava                           : 'com.google.guava:guava:30.1-jre',
+            jsr250Api                       : 'javax.annotation:jsr250-api:1.0',
+            newrelicApi                     : 'com.newrelic.agent.java:newrelic-api:6.4.1',
+            springBootDependencies          : "org.springframework.boot:spring-boot-dependencies:2.3.9.RELEASE",
             twBaseUtils                     : "com.transferwise.common:tw-base-utils:1.3.2",
 
             // versions managed by spring-boot-dependencies platform
