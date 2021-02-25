@@ -76,6 +76,14 @@ compileJava {
     options.compilerArgs << '-Xlint:-processing'
 }
 
+compileTestJava {
+    sourceCompatibility = JavaVersion.VERSION_15
+    targetCompatibility = JavaVersion.VERSION_15
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(15)
+    }
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -144,6 +152,9 @@ publishing {
 }
 
 test {
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(15)
+    }
     useJUnitPlatform()
     testLogging {
         events TestLogEvent.STARTED, TestLogEvent.FAILED, TestLogEvent.SKIPPED, TestLogEvent.PASSED,

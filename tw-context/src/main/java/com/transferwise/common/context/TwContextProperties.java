@@ -10,7 +10,7 @@ public class TwContextProperties {
 
   /**
    * Used to multiply all timeouts with specified values.
-   * 
+   *
    * <p>Useful for development environments, where timeouts' values set for production do not work well.
    */
   private Double timeoutMultiplier;
@@ -20,4 +20,6 @@ public class TwContextProperties {
    * <p>Useful for development environments, where timeouts' values set for production do not work well.
    */
   private Duration timeoutAdditive;
+
+  private boolean mdcRestoringEntryPointInterceptorEnabled = true;
 }

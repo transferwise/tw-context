@@ -131,4 +131,23 @@ public class ApplicationIntTest {
     })).isInstanceOf(DeadlineExceededException.class)
         .hasMessage("Deadline exceeded 1 seconds 1 milliseconds ago. Time taken in current unit of work was 3 seconds.");
   }
+
+  @Test
+  void mdcIsRestoredWhenExcitingOutmostEntryPoint() {
+    var outMostEntryPoint = TwContext.current().createSubContext().asEntryPoint("Test", "Test");
+
+    var key = "key";
+    MDC.put(key, "0");
+    outMostEntryPoint.execute(() -> {
+      MDC.put(key, "1");
+
+      var innerEntryPoint = TwContext.current().createSubContext().asEntryPoint("Test", "Test_Test");
+      innerEntryPoint.execute(() -> {
+        MDC.put(key, "2");
+      });
+      assertThat(MDC.get(key)).as("Inner entrypoint exit is not supposed to restore MDC.").isEqualTo("2");
+    });
+
+    assertThat(MDC.get(key)).as("Outer entrypoint exit does restore MDC.").isEqualTo("0");
+  }
 }

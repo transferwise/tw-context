@@ -2,6 +2,7 @@ package com.transferwise.common.context;
 
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,11 +11,22 @@ import org.springframework.context.annotation.Configuration;
 public class TwContextAutoConfiguration {
 
   @Bean
+  @ConditionalOnMissingBean
   public UnitOfWorkManager twContextUnitOfWorkManager(MeterRegistry meterRegistry) {
     return new DefaultUnitOfWorkManager(meterRegistry);
   }
 
   @Bean
+  @ConditionalOnMissingBean
+  @ConditionalOnProperty(value = "tw-context.core.mdcRestoringEntryPointInterceptorEnabled", havingValue = "true", matchIfMissing = true)
+  public MdcRestoringEntryPointInterceptor twContextMdcRestoringEntryPointInterceptor() {
+    MdcRestoringEntryPointInterceptor interceptor = new MdcRestoringEntryPointInterceptor();
+    TwContext.addExecutionInterceptor(interceptor);
+    return interceptor;
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
   public TwContextUniqueEntryPointsLimitingInterceptor twContextUniqueEpLimitingInterceptor(MeterRegistry meterRegistry) {
     TwContextUniqueEntryPointsLimitingInterceptor interceptor =
         new TwContextUniqueEntryPointsLimitingInterceptor(meterRegistry);
@@ -34,4 +46,5 @@ public class TwContextAutoConfiguration {
   public DefaultTimeoutCustomizer twContextTimeoutCustomizer(TwContextProperties twContextProperties) {
     return new DefaultTimeoutCustomizer(twContextProperties);
   }
+
 }
