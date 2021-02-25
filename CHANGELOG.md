@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.8.0] - 2021-02-25
 ### Added
-- `MdcCleaningEntryPointInterceptor` for automatically cleaning MDC when exiting from the outmost entrypoint.
+- `MdcRestoringEntryPointInterceptor` for automatically cleaning MDC when exiting from the outmost entrypoint.
 
 ## [0.7.0] - 2020-09-31
 ### Added
