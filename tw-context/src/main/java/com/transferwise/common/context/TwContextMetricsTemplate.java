@@ -1,5 +1,8 @@
 package com.transferwise.common.context;
 
+import com.transferwise.common.baseutils.meters.cache.IMeterCache;
+import com.transferwise.common.baseutils.meters.cache.MeterCache;
+import com.transferwise.common.baseutils.meters.cache.TagsSet;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
@@ -25,8 +28,22 @@ public class TwContextMetricsTemplate {
 
   protected MeterRegistry meterRegistry;
 
+  protected IMeterCache meterCache;
+
+  /**
+   * Older tw-service-comms need this constructor.
+   *
+   * <p>Remove after 2020-04-01.
+   */
+  @Deprecated
   public TwContextMetricsTemplate(MeterRegistry meterRegistry) {
     this.meterRegistry = meterRegistry;
+    this.meterCache = new MeterCache(meterRegistry);
+  }
+
+  public TwContextMetricsTemplate(MeterRegistry meterRegistry, IMeterCache meterCache) {
+    this.meterRegistry = meterRegistry;
+    this.meterCache = meterCache;
   }
 
   public void registerUniqueEntryPointsGauges(Supplier<Number> entriesCount, Supplier<Number> maxEntries) {
@@ -35,15 +52,15 @@ public class TwContextMetricsTemplate {
   }
 
   public void registerDeadlineExtending(@NonNull String group, @NonNull String name, Criticality criticality) {
-    meterRegistry.counter(METRIC_DEADLINE_EXTENDED, tagsFor(group, name, null, criticality)).increment();
+    meterCache.counter(METRIC_DEADLINE_EXTENDED, tagsFor(group, name, null, criticality)).increment();
   }
 
   public void registerCriticalityChange(@NonNull String group, @NonNull String name, Criticality criticality) {
-    meterRegistry.counter(METRIC_CRITICALITY_CHANGED, tagsFor(group, name, null, criticality)).increment();
+    meterCache.counter(METRIC_CRITICALITY_CHANGED, tagsFor(group, name, null, criticality)).increment();
   }
 
   public void registerDeadlineExceeded(@NonNull String group, @NonNull String name, @NonNull String owner, Criticality criticality, String source) {
-    meterRegistry.counter(METRIC_DEADLINE_EXCEEDED, tagsFor(group, name, owner, criticality).and(TAG_SOURCE, source)).increment();
+    meterCache.counter(METRIC_DEADLINE_EXCEEDED, tagsFor(group, name, owner, criticality, source)).increment();
   }
 
   /**
@@ -51,11 +68,16 @@ public class TwContextMetricsTemplate {
    */
   @Deprecated
   public void registerDeadlineExceeded(@NonNull String group, @NonNull String name, Criticality criticality, String source) {
-    meterRegistry.counter(METRIC_DEADLINE_EXCEEDED, tagsFor(group, name, null, criticality).and(TAG_SOURCE, source)).increment();
+    meterCache.counter(METRIC_DEADLINE_EXCEEDED, tagsFor(group, name, null, criticality, source)).increment();
   }
 
-  private Tags tagsFor(@NonNull String group, @NonNull String name, String owner, Criticality criticality) {
-    return Tags.of(TAG_EP_GROUP, group, TAG_EP_NAME, name, TAG_EP_OWNER, owner == null ? "Generic" : owner, TAG_CRITICALITY,
+  private TagsSet tagsFor(@NonNull String group, @NonNull String name, String owner, Criticality criticality) {
+    return TagsSet.of(TAG_EP_GROUP, group, TAG_EP_NAME, name, TAG_EP_OWNER, owner == null ? "Generic" : owner, TAG_CRITICALITY,
         criticality == null ? TAG_VALUE_UNKNOWN : criticality.name());
+  }
+
+  private TagsSet tagsFor(@NonNull String group, @NonNull String name, String owner, Criticality criticality, String source) {
+    return TagsSet.of(TAG_EP_GROUP, group, TAG_EP_NAME, name, TAG_EP_OWNER, owner == null ? "Generic" : owner, TAG_CRITICALITY,
+        criticality == null ? TAG_VALUE_UNKNOWN : criticality.name(), TAG_SOURCE, source);
   }
 }

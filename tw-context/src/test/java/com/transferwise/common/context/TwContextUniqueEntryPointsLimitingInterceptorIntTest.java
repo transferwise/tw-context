@@ -3,6 +3,8 @@ package com.transferwise.common.context;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.transferwise.common.baseutils.ExceptionUtils;
+import com.transferwise.common.baseutils.meters.cache.IMeterCache;
+import com.transferwise.common.baseutils.meters.cache.MeterCache;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.util.concurrent.CountDownLatch;
@@ -21,7 +23,8 @@ public class TwContextUniqueEntryPointsLimitingInterceptorIntTest {
     final int sleepTimeMs = 5000;
 
     MeterRegistry meterRegistry = new SimpleMeterRegistry();
-    TwContext.addExecutionInterceptor(new TwContextUniqueEntryPointsLimitingInterceptor(meterRegistry, 1));
+    var meterCache = new MeterCache(meterRegistry);
+    TwContext.addExecutionInterceptor(new TwContextUniqueEntryPointsLimitingInterceptor(meterRegistry, meterCache, 1));
 
     final long startTimeMs = TwContextClockHolder.getClock().millis();
 
@@ -65,7 +68,8 @@ public class TwContextUniqueEntryPointsLimitingInterceptorIntTest {
   @SneakyThrows
   public void testThatUniqueEntryPointIsCountedOnce() {
     MeterRegistry meterRegistry = new SimpleMeterRegistry();
-    TwContext.addExecutionInterceptor(new TwContextUniqueEntryPointsLimitingInterceptor(meterRegistry, 100));
+    var meterCache = new MeterCache(meterRegistry);
+    TwContext.addExecutionInterceptor(new TwContextUniqueEntryPointsLimitingInterceptor(meterRegistry, meterCache, 100));
 
     final int n = 100;
     Thread[] threads = new Thread[n];

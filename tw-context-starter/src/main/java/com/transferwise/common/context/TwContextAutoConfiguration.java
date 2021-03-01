@@ -1,5 +1,7 @@
 package com.transferwise.common.context;
 
+import com.transferwise.common.baseutils.meters.cache.IMeterCache;
+import com.transferwise.common.baseutils.meters.cache.MeterCache;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,8 +14,8 @@ public class TwContextAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public UnitOfWorkManager twContextUnitOfWorkManager(MeterRegistry meterRegistry) {
-    return new DefaultUnitOfWorkManager(meterRegistry);
+  public UnitOfWorkManager twContextUnitOfWorkManager(MeterRegistry meterRegistry, IMeterCache meterCache) {
+    return new DefaultUnitOfWorkManager(meterRegistry, meterCache);
   }
 
   @Bean
@@ -27,9 +29,9 @@ public class TwContextAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public TwContextUniqueEntryPointsLimitingInterceptor twContextUniqueEpLimitingInterceptor(MeterRegistry meterRegistry) {
+  public TwContextUniqueEntryPointsLimitingInterceptor twContextUniqueEpLimitingInterceptor(MeterRegistry meterRegistry, IMeterCache meterCache) {
     TwContextUniqueEntryPointsLimitingInterceptor interceptor =
-        new TwContextUniqueEntryPointsLimitingInterceptor(meterRegistry);
+        new TwContextUniqueEntryPointsLimitingInterceptor(meterRegistry, meterCache);
     TwContext.addExecutionInterceptor(interceptor);
     return interceptor;
   }
@@ -45,6 +47,12 @@ public class TwContextAutoConfiguration {
   @ConditionalOnMissingBean(TimeoutCustomizer.class)
   public DefaultTimeoutCustomizer twContextTimeoutCustomizer(TwContextProperties twContextProperties) {
     return new DefaultTimeoutCustomizer(twContextProperties);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(IMeterCache.class)
+  public IMeterCache twDefaultMeterCache(MeterRegistry meterRegistry) {
+    return new MeterCache(meterRegistry);
   }
 
 }

@@ -17,7 +17,7 @@ public class MdcRestoringEntryPointInterceptor implements TwContextExecutionInte
     try {
       return supplier.get();
     } finally {
-      if (contextMap == null) {
+      if (contextMap == null || contextMap.isEmpty()) {
         MDC.clear();
       } else {
         MDC.setContextMap(contextMap);
