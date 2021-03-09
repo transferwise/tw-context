@@ -5,7 +5,6 @@ import com.transferwise.common.baseutils.meters.cache.MeterCache;
 import com.transferwise.common.baseutils.meters.cache.TagsSet;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Tags;
 import java.util.function.Supplier;
 import lombok.NonNull;
 

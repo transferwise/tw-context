@@ -3,7 +3,6 @@ package com.transferwise.common.context;
 import com.newrelic.api.agent.NewRelic;
 import com.newrelic.api.agent.Trace;
 import com.transferwise.common.baseutils.meters.cache.IMeterCache;
-import io.micrometer.core.instrument.MeterRegistry;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;

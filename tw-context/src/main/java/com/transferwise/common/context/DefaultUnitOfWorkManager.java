@@ -3,7 +3,6 @@ package com.transferwise.common.context;
 import static com.transferwise.common.context.UnitOfWork.TW_CONTEXT_KEY;
 
 import com.transferwise.common.baseutils.meters.cache.IMeterCache;
-import io.micrometer.core.instrument.MeterRegistry;
 import java.time.Duration;
 import java.time.Instant;
 import lombok.NonNull;
