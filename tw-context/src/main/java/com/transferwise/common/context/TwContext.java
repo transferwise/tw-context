@@ -109,10 +109,10 @@ public class TwContext {
   }
 
   public TwContext asEntryPoint(@Nonnull String group, @Nonnull String name) {
-    if (StringUtils.isEmpty(group) || StringUtils.isWhitespace(group)) {
+    if (StringUtils.isBlank(group)) {
       throw new IllegalStateException("Empty group provided.");
     }
-    if (StringUtils.isEmpty(name) || StringUtils.isWhitespace(name)) {
+    if (StringUtils.isBlank(name)) {
       throw new IllegalStateException("Empty name provided.");
     }
 

@@ -12,8 +12,8 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
 
   private final TwContextMetricsTemplate metricsTemplate;
 
-  public DefaultUnitOfWorkManager(MeterRegistry meterRegistry, IMeterCache meterCache) {
-    this.metricsTemplate = new TwContextMetricsTemplate(meterRegistry, meterCache);
+  public DefaultUnitOfWorkManager(IMeterCache meterCache) {
+    this.metricsTemplate = new TwContextMetricsTemplate(meterCache);
   }
 
   @Override

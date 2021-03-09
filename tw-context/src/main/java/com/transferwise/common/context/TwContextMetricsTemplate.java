@@ -26,8 +26,6 @@ public class TwContextMetricsTemplate {
   public static final String TAG_SOURCE = "source";
   public static final String TAG_VALUE_UNKNOWN = "unknown";
 
-  protected MeterRegistry meterRegistry;
-
   protected IMeterCache meterCache;
 
   /**
@@ -37,18 +35,16 @@ public class TwContextMetricsTemplate {
    */
   @Deprecated
   public TwContextMetricsTemplate(MeterRegistry meterRegistry) {
-    this.meterRegistry = meterRegistry;
     this.meterCache = new MeterCache(meterRegistry);
   }
 
-  public TwContextMetricsTemplate(MeterRegistry meterRegistry, IMeterCache meterCache) {
-    this.meterRegistry = meterRegistry;
+  public TwContextMetricsTemplate(IMeterCache meterCache) {
     this.meterCache = meterCache;
   }
 
   public void registerUniqueEntryPointsGauges(Supplier<Number> entriesCount, Supplier<Number> maxEntries) {
-    Gauge.builder(METRIC_UNIQUE_ENTRYPOINTS, entriesCount).register(meterRegistry);
-    Gauge.builder(METRIC_UNIQUE_ENTRYPOINTS_LIMIT, maxEntries).register(meterRegistry);
+    Gauge.builder(METRIC_UNIQUE_ENTRYPOINTS, entriesCount).register(meterCache.getMeterRegistry());
+    Gauge.builder(METRIC_UNIQUE_ENTRYPOINTS_LIMIT, maxEntries).register(meterCache.getMeterRegistry());
   }
 
   public void registerDeadlineExtending(@NonNull String group, @NonNull String name, Criticality criticality) {

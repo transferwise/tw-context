@@ -14,8 +14,8 @@ public class TwContextAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public UnitOfWorkManager twContextUnitOfWorkManager(MeterRegistry meterRegistry, IMeterCache meterCache) {
-    return new DefaultUnitOfWorkManager(meterRegistry, meterCache);
+  public UnitOfWorkManager twContextUnitOfWorkManager(IMeterCache meterCache) {
+    return new DefaultUnitOfWorkManager(meterCache);
   }
 
   @Bean
@@ -29,9 +29,8 @@ public class TwContextAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean
-  public TwContextUniqueEntryPointsLimitingInterceptor twContextUniqueEpLimitingInterceptor(MeterRegistry meterRegistry, IMeterCache meterCache) {
-    TwContextUniqueEntryPointsLimitingInterceptor interceptor =
-        new TwContextUniqueEntryPointsLimitingInterceptor(meterRegistry, meterCache);
+  public TwContextUniqueEntryPointsLimitingInterceptor twContextUniqueEpLimitingInterceptor(IMeterCache meterCache) {
+    TwContextUniqueEntryPointsLimitingInterceptor interceptor = new TwContextUniqueEntryPointsLimitingInterceptor(meterCache);
     TwContext.addExecutionInterceptor(interceptor);
     return interceptor;
   }

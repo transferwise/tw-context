@@ -22,14 +22,14 @@ public class TwContextUniqueEntryPointsLimitingInterceptor implements TwContextE
   private int entriesCount;
   private final Lock lock = new ReentrantLock();
 
-  public TwContextUniqueEntryPointsLimitingInterceptor(MeterRegistry meterRegistry, IMeterCache meterCache) {
-    this(meterRegistry, meterCache, DEFAULT_MAX_ENTRIES);
+  public TwContextUniqueEntryPointsLimitingInterceptor(IMeterCache meterCache) {
+    this(meterCache, DEFAULT_MAX_ENTRIES);
   }
 
-  public TwContextUniqueEntryPointsLimitingInterceptor(MeterRegistry meterRegistry, IMeterCache meterCache, int maxEntries) {
+  public TwContextUniqueEntryPointsLimitingInterceptor(IMeterCache meterCache, int maxEntries) {
     this.maxEntries = maxEntries;
 
-    TwContextMetricsTemplate metricsTemplate = new TwContextMetricsTemplate(meterRegistry, meterCache);
+    TwContextMetricsTemplate metricsTemplate = new TwContextMetricsTemplate(meterCache);
     metricsTemplate.registerUniqueEntryPointsGauges(() -> entriesCount, () -> maxEntries);
   }
 
