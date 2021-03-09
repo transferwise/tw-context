@@ -3,6 +3,7 @@ package com.transferwise.common.context;
 import com.transferwise.common.baseutils.meters.cache.IMeterCache;
 import com.transferwise.common.baseutils.meters.cache.MeterCache;
 import com.transferwise.common.baseutils.meters.cache.TagsSet;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.function.Supplier;
@@ -25,6 +26,9 @@ public class TwContextMetricsTemplate {
   public static final String TAG_SOURCE = "source";
   public static final String TAG_VALUE_UNKNOWN = "unknown";
 
+  // For backward compatibility, when another class is extending our class.
+  @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+  protected MeterRegistry meterRegistry;
   protected IMeterCache meterCache;
 
   /**
@@ -35,10 +39,12 @@ public class TwContextMetricsTemplate {
   @Deprecated
   public TwContextMetricsTemplate(MeterRegistry meterRegistry) {
     this.meterCache = new MeterCache(meterRegistry);
+    this.meterRegistry = meterRegistry;
   }
 
   public TwContextMetricsTemplate(IMeterCache meterCache) {
     this.meterCache = meterCache;
+    this.meterRegistry = meterCache.getMeterRegistry();
   }
 
   public void registerUniqueEntryPointsGauges(Supplier<Number> entriesCount, Supplier<Number> maxEntries) {
