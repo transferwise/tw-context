@@ -5,6 +5,8 @@ ext.projectArtifactName = "tw-context"
 apply from: '../build.common.gradle'
 
 dependencies {
+    compileOnly libraries.spotbugsAnnotations
+
     implementation libraries.newrelicApi
     implementation libraries.commonsLang3
     implementation libraries.twBaseUtils
