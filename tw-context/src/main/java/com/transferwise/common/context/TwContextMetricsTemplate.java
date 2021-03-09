@@ -25,6 +25,7 @@ public class TwContextMetricsTemplate {
   public static final String TAG_SOURCE = "source";
   public static final String TAG_VALUE_UNKNOWN = "unknown";
 
+  protected MeterRegistry meterRegistry;
   protected IMeterCache meterCache;
 
   /**
@@ -35,10 +36,12 @@ public class TwContextMetricsTemplate {
   @Deprecated
   public TwContextMetricsTemplate(MeterRegistry meterRegistry) {
     this.meterCache = new MeterCache(meterRegistry);
+    this.meterRegistry = meterRegistry;
   }
 
   public TwContextMetricsTemplate(IMeterCache meterCache) {
     this.meterCache = meterCache;
+    this.meterRegistry = meterCache.getMeterRegistry();
   }
 
   public void registerUniqueEntryPointsGauges(Supplier<Number> entriesCount, Supplier<Number> maxEntries) {
