@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import javax.annotation.Nonnull;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -29,15 +31,15 @@ public class TwContext {
   public static final String MDC_KEY_EP_GROUP = "tw_entrypoint_group";
   public static final String MDC_KEY_EP_OWNER = "tw_entrypoint_owner";
 
-  private static final ThreadLocal<TwContext> contextTl = new ThreadLocal<>();
+  private static final ThreadLocal<Optional<TwContext>> contextTl = new ThreadLocal<>();
   private static final List<TwContextExecutionInterceptor> interceptors = new CopyOnWriteArrayList<>();
   private static final List<TwContextAttributeChangeListener> attributeChangeListeners = new CopyOnWriteArrayList<>();
   private static final TwContext ROOT_CONTEXT = new TwContext(null, true);
   private static final RateLimiter throwableLoggingRateLimiter = RateLimiter.create(2);
 
   public static TwContext current() {
-    TwContext twContext = contextTl.get();
-    return twContext == null ? ROOT_CONTEXT : twContext;
+    Optional<TwContext> twContext = contextTl.get();
+    return twContext == null || !twContext.isPresent() ? ROOT_CONTEXT : twContext.get();
   }
 
   public static void addExecutionInterceptor(@NonNull TwContextExecutionInterceptor interceptor) {
@@ -106,11 +108,11 @@ public class TwContext {
     return new TwContext(this);
   }
 
-  public TwContext asEntryPoint(@NonNull String group, @NonNull String name) {
-    if (StringUtils.trimToNull(group) == null) {
+  public TwContext asEntryPoint(@Nonnull String group, @Nonnull String name) {
+    if (StringUtils.isBlank(group)) {
       throw new IllegalStateException("Empty group provided.");
     }
-    if (StringUtils.trimToNull(name) == null) {
+    if (StringUtils.isBlank(name)) {
       throw new IllegalStateException("Empty name provided.");
     }
 
@@ -143,8 +145,8 @@ public class TwContext {
   }
 
   public TwContext attach() {
-    final TwContext current = contextTl.get();
-    contextTl.set(this);
+    final TwContext current = current();
+    contextTl.set(Optional.of(this));
 
     preAttachMdc = MDC.getCopyOfContextMap();
     mdc.entrySet().forEach(e -> {
@@ -161,9 +163,9 @@ public class TwContext {
 
   public void detach(TwContext previous) {
     if (previous == null || previous.isRoot()) {
-      contextTl.remove();
+      contextTl.set(Optional.empty());
     } else {
-      contextTl.set(previous);
+      contextTl.set(Optional.of(previous));
     }
 
     mdc.keySet().forEach(key -> {

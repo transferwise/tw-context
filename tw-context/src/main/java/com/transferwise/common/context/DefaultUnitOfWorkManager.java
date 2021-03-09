@@ -2,7 +2,7 @@ package com.transferwise.common.context;
 
 import static com.transferwise.common.context.UnitOfWork.TW_CONTEXT_KEY;
 
-import io.micrometer.core.instrument.MeterRegistry;
+import com.transferwise.common.baseutils.meters.cache.IMeterCache;
 import java.time.Duration;
 import java.time.Instant;
 import lombok.NonNull;
@@ -11,8 +11,8 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
 
   private final TwContextMetricsTemplate metricsTemplate;
 
-  public DefaultUnitOfWorkManager(MeterRegistry meterRegistry) {
-    this.metricsTemplate = new TwContextMetricsTemplate(meterRegistry);
+  public DefaultUnitOfWorkManager(IMeterCache meterCache) {
+    this.metricsTemplate = new TwContextMetricsTemplate(meterCache);
   }
 
   @Override

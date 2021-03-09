@@ -2,7 +2,7 @@ package com.transferwise.common.context;
 
 import com.newrelic.api.agent.NewRelic;
 import com.newrelic.api.agent.Trace;
-import io.micrometer.core.instrument.MeterRegistry;
+import com.transferwise.common.baseutils.meters.cache.IMeterCache;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
@@ -21,14 +21,14 @@ public class TwContextUniqueEntryPointsLimitingInterceptor implements TwContextE
   private int entriesCount;
   private final Lock lock = new ReentrantLock();
 
-  public TwContextUniqueEntryPointsLimitingInterceptor(MeterRegistry meterRegistry) {
-    this(meterRegistry, DEFAULT_MAX_ENTRIES);
+  public TwContextUniqueEntryPointsLimitingInterceptor(IMeterCache meterCache) {
+    this(meterCache, DEFAULT_MAX_ENTRIES);
   }
 
-  public TwContextUniqueEntryPointsLimitingInterceptor(MeterRegistry meterRegistry, int maxEntries) {
+  public TwContextUniqueEntryPointsLimitingInterceptor(IMeterCache meterCache, int maxEntries) {
     this.maxEntries = maxEntries;
 
-    TwContextMetricsTemplate metricsTemplate = new TwContextMetricsTemplate(meterRegistry);
+    TwContextMetricsTemplate metricsTemplate = new TwContextMetricsTemplate(meterCache);
     metricsTemplate.registerUniqueEntryPointsGauges(() -> entriesCount, () -> maxEntries);
   }
 
