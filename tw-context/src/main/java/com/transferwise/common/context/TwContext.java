@@ -1,8 +1,9 @@
 package com.transferwise.common.context;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.RateLimiter;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -76,6 +77,11 @@ public class TwContext {
     if (!context.isRoot()) {
       context.mdc.put(key, value);
     }
+  }
+
+  @VisibleForTesting
+  static void removeExecutionInterceptors() {
+    interceptors.clear();
   }
 
   @Getter
@@ -284,21 +290,17 @@ public class TwContext {
   }
 
   public <T> T executeWithInterceptors(Supplier<T> supplier) {
-    List<TwContextExecutionInterceptor> applicableInterceptors = new ArrayList<>();
-    for (TwContextExecutionInterceptor interceptor : TwContext.interceptors) {
-      if (interceptor.applies(this)) {
-        applicableInterceptors.add(interceptor);
-      }
-    }
-    return executeWithInterceptors(supplier, applicableInterceptors, 0);
+    return executeWithInterceptors(supplier, TwContext.interceptors.iterator());
   }
 
-  private <T> T executeWithInterceptors(Supplier<T> supplier, List<TwContextExecutionInterceptor> interceptors, int interceptorIdx) {
-    if (interceptorIdx >= interceptors.size()) {
-      return supplier.get();
+  private <T> T executeWithInterceptors(Supplier<T> supplier, Iterator<TwContextExecutionInterceptor> interceptorIterator) {
+    while (interceptorIterator.hasNext()) {
+      TwContextExecutionInterceptor interceptor = interceptorIterator.next();
+      if (interceptor.applies(this)) {
+        return interceptor.intercept(this, () -> executeWithInterceptors(supplier, interceptorIterator));
+      }
     }
-    return interceptors.get(interceptorIdx)
-        .intercept(this, () -> executeWithInterceptors(supplier, interceptors, interceptorIdx + 1));
+    return supplier.get();
   }
 
   private void fireAttributeChangeEvent(String key, Object oldValue, Object newValue) {

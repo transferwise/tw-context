@@ -2,10 +2,20 @@ package com.transferwise.common.context;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
 public class TwContextTest {
+
+  @AfterEach
+  void setup() {
+    TwContext.removeExecutionInterceptors();
+  }
 
   @Test
   void testContextHierarchy() {
@@ -95,6 +105,32 @@ public class TwContextTest {
     });
 
     assertThat(MDC.get(testKey)).isNull();
+  }
+
+  @Test
+  void testInterceptorChain() {
+    List<Integer> results = new ArrayList<>();
+    for (int i = 0; i < 3; i++) {
+      int finalI = i;
+      TwContext.addExecutionInterceptor(new TwContextExecutionInterceptor() {
+        @Override
+        public boolean applies(TwContext context) {
+          return finalI == 0 || finalI == 2;
+        }
+
+        @Override
+        public <T> T intercept(TwContext context, Supplier<T> supplier) {
+          results.add(finalI);
+          return supplier.get();
+        }
+      });
+    }
+
+    TwContext.current().execute(() -> {
+      // do nothing
+    });
+
+    assertThat(results).containsExactly(0, 2);
   }
 
 }
