@@ -10,10 +10,16 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 @Slf4j
-public class TwContextUniqueEntryPointsLimitingInterceptorIntTest {
+public class TwContextUniqueEntryPointsLimitingInterceptorTest {
+
+  @AfterEach
+  void setup() {
+    TwContext.removeExecutionInterceptors();
+  }
 
   // Was a production bug.
   @Test

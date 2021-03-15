@@ -1,5 +1,6 @@
 package com.transferwise.common.context;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.RateLimiter;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -76,6 +77,11 @@ public class TwContext {
     if (!context.isRoot()) {
       context.mdc.put(key, value);
     }
+  }
+
+  @VisibleForTesting
+  static void removeExecutionInterceptors() {
+    interceptors.clear();
   }
 
   @Getter
@@ -288,7 +294,7 @@ public class TwContext {
   }
 
   private <T> T executeWithInterceptors(Supplier<T> supplier, Iterator<TwContextExecutionInterceptor> interceptorIterator) {
-    if (interceptorIterator.hasNext()) {
+    while (interceptorIterator.hasNext()) {
       TwContextExecutionInterceptor interceptor = interceptorIterator.next();
       if (interceptor.applies(this)) {
         return interceptor.intercept(this, () -> executeWithInterceptors(supplier, interceptorIterator));
