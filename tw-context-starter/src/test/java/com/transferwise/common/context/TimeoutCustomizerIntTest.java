@@ -3,6 +3,7 @@ package com.transferwise.common.context;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,7 @@ public class TimeoutCustomizerIntTest {
   public void testThatTimeoutIsCorrectlyCustomized() {
     assertThat(timeoutCustomizer.customize("test", null)).isNull();
     assertThat(timeoutCustomizer.customize("test", Duration.ofSeconds(2))).isEqualByComparingTo(Duration.ofSeconds(5));
+    assertThat(timeoutCustomizer.customize("test", 2, TimeUnit.SECONDS)).isEqualTo(5);
   }
 
   @Test
@@ -35,10 +37,12 @@ public class TimeoutCustomizerIntTest {
     try {
       twContextProperties.setTimeoutAdditive(null);
       assertThat(timeoutCustomizer.customize("test", Duration.ofSeconds(2))).isEqualByComparingTo(Duration.ofSeconds(3));
+      assertThat(timeoutCustomizer.customize("test", 2, TimeUnit.SECONDS)).isEqualTo(3);
       twContextProperties.setTimeoutMultiplier(null);
       assertThat(timeoutCustomizer.customize("test", Duration.ofSeconds(2))).isEqualByComparingTo(Duration.ofSeconds(2));
+      assertThat(timeoutCustomizer.customize("test", 2, TimeUnit.SECONDS)).isEqualTo(2);
       twContextProperties.setTimeoutAdditive(Duration.ofSeconds(2));
-      assertThat(timeoutCustomizer.customize("test", Duration.ofSeconds(2))).isEqualByComparingTo(Duration.ofSeconds(4));
+      assertThat(timeoutCustomizer.customize("test", 2, TimeUnit.SECONDS)).isEqualTo(4);
     } finally {
       twContextProperties.setTimeoutAdditive(additive);
       twContextProperties.setTimeoutMultiplier(multiplier);
