@@ -42,6 +42,7 @@ public class TimeoutCustomizerIntTest {
       assertThat(timeoutCustomizer.customize("test", Duration.ofSeconds(2))).isEqualByComparingTo(Duration.ofSeconds(2));
       assertThat(timeoutCustomizer.customize("test", 2, TimeUnit.SECONDS)).isEqualTo(2);
       twContextProperties.setTimeoutAdditive(Duration.ofSeconds(2));
+      assertThat(timeoutCustomizer.customize("test", Duration.ofSeconds(2))).isEqualByComparingTo(Duration.ofSeconds(4));
       assertThat(timeoutCustomizer.customize("test", 2, TimeUnit.SECONDS)).isEqualTo(4);
     } finally {
       twContextProperties.setTimeoutAdditive(additive);
