@@ -89,7 +89,7 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
 
     @Override
     public Builder deadline(Duration duration) {
-      this.deadline = TwContextClockHolder.getClock().instant().plus(duration);
+      this.deadline = Instant.ofEpochMilli(TwContextClockHolder.getClock().millis()).plus(duration);
       return this;
     }
 

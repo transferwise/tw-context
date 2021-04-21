@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.2] - 2021-04-21
+### Changed
+- Using a faster form for creating `java.time.Instant`-s.
+We are only interested in millisecond precision and getting nanoseconds seems to be relatively expensive operation.
+
 ## [0.10.1] - 2021-04-05
 ### Added
 - NoOpTimeoutCustomizer for unit tests.
