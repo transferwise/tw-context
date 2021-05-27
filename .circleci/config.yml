@@ -59,9 +59,10 @@ jobs:
             git config --global user.name "tw-circleci"
       - run:
           name: Publish artifacts
-          if ./.circleci/version-changed.sh tw-context-starter ; then
-            ./gradlew pushTag publish --no-daemon --console=plain
-          fi
+          command: |
+            if ./.circleci/version-changed.sh tw-base-utils ; then
+              ./gradlew pushTag publish --no-daemon --console=plain
+            fi
 
 workflows:
   version: 2
