@@ -11,9 +11,7 @@ apply from: "../build.libraries.gradle"
 
 buildscript {
     repositories {
-        maven {
-            setUrl("https://arti.tw.ee/artifactory/plugins-release")
-        }
+        mavenCentral()
         mavenLocal()
     }
 }
@@ -23,13 +21,12 @@ apply plugin: "maven-publish"
 apply plugin: "checkstyle"
 apply plugin: "idea"
 apply plugin: "com.github.spotbugs"
+apply plugin: "signing"
 
 group = "com.transferwise.common"
 
 repositories {
-    maven {
-        setUrl("https://arti.tw.ee/artifactory/libs-release")
-    }
+    mavenCentral()
     mavenLocal()
 }
 
@@ -54,8 +51,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
     withSourcesJar()
     withJavadocJar()
 }
@@ -99,7 +96,7 @@ publishing {
                 packaging = "jar"
                 licenses {
                     license {
-                        name = 'The Apache License, Version 2.0, Copyright 2019 TransferWise Ltd'
+                        name = 'The Apache License, Version 2.0, Copyright 2021 TransferWise Ltd'
                         url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                     }
                 }
@@ -121,11 +118,11 @@ publishing {
         }
     }
 
-/*
-    signing {
-        sign publishing.publications.mavenJava
+    if (System.getenv("OPENSOURCE_PUBLISH") == "true") {
+        signing {
+            sign publishing.publications.mavenJava
+        }
     }
-*/
 
     javadoc {
         if (JavaVersion.current().isJava9Compatible()) {
@@ -134,20 +131,24 @@ publishing {
     }
 
     repositories {
-        maven {
-            url "https://arti.tw.ee/artifactory/libs-${project.version.endsWith('-SNAPSHOT') ? 'snapshot' : 'release'}-local"
-            credentials {
-                username = artifactoryUser
-                password = artifactoryPassword
+        if (System.getenv("OPENSOURCE_PUBLISH") == "true") {
+            maven {
+                url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+                credentials {
+                    username sonatypeUsername
+                    password sonatypePassword
+                }
             }
         }
-        /*maven {
-            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-            credentials {
-                username sonatypeUsername
-                password sonatypePassword
+        else{
+            maven {
+                url "https://arti.tw.ee/artifactory/libs-${project.version.endsWith('-SNAPSHOT') ? 'snapshot' : 'release'}-local"
+                credentials {
+                    username = artifactoryUser
+                    password = artifactoryPassword
+                }
             }
-        }*/
+        }
     }
 }
 
@@ -179,8 +180,6 @@ spotbugs {
 }
 
 tasks.withType(Checkstyle) {
-    //Unfortunately it does not allow to suppress javadoc issues.
-    //config = getCheckstyleConfig()
     config = resources.text.fromFile(file('../google_checks.xml'))
 
     maxWarnings = 0
