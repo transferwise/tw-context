@@ -12,13 +12,13 @@ public class DeadlineExceededException extends RuntimeException {
   }
 
   private static String createMessage(Instant deadline, Instant unitOfWorkCreationTime) {
-    long sinceDeadlineExceededMillis = Math.max(0, TwContextClockHolder.getClock().millis() - deadline.toEpochMilli());
-    String formattedDeadline = DurationFormatUtils.formatDuration(Duration.ofMillis(sinceDeadlineExceededMillis));
+    Duration sinceDeadlineExceeded = Duration.between(deadline, TwContextClockHolder.getClock().instant());
+    String formattedDeadline = DurationFormatUtils.formatDuration(sinceDeadlineExceeded);
     if (unitOfWorkCreationTime == null) {
       return "Deadline exceeded " + formattedDeadline + " ago.";
     } else {
-      long durationMillis = Math.max(0, TwContextClockHolder.getClock().millis() - unitOfWorkCreationTime.toEpochMilli());
-      String formattedDuration = DurationFormatUtils.formatDuration(Duration.ofMillis(durationMillis));
+      Duration duration = Duration.between(unitOfWorkCreationTime, TwContextClockHolder.getClock().instant());
+      String formattedDuration = DurationFormatUtils.formatDuration(duration);
       return "Deadline exceeded " + formattedDeadline + " ago. Time taken in current unit of work was " + formattedDuration + ".";
     }
   }

@@ -21,7 +21,7 @@ public class DefaultTimeoutCustomizer implements TimeoutCustomizer {
 
     Duration result;
     if (twContextProperties.getTimeoutMultiplier() != null) {
-      result = Duration.ofMillis((long) (timeout.toMillis() * twContextProperties.getTimeoutMultiplier()));
+      result = Duration.ofNanos((long) (timeout.toNanos() * twContextProperties.getTimeoutMultiplier()));
     } else {
       result = timeout;
     }

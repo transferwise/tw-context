@@ -14,10 +14,10 @@ public class UnitOfWork {
   private Criticality criticality;
   private Instant deadline;
   @NonNull
-  private Instant creationTime = Instant.ofEpochMilli(TwContextClockHolder.getClock().millis());
+  private Instant creationTime = TwContextClockHolder.getClock().instant();
 
   public boolean hasDeadlinePassed() {
-    return deadline != null && deadline.isBefore(Instant.ofEpochMilli(TwContextClockHolder.getClock().millis()));
+    return deadline != null && deadline.isBefore(TwContextClockHolder.getClock().instant());
   }
 
 }
