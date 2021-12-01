@@ -140,6 +140,7 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
           metricsTemplate.registerDeadlineExtending(group, name, criticality);
         }
         newUnitOfWork.setDeadline(deadline);
+        context.putMdc("tw_deadline", deadline.toString());
       }
       if (criticality != null) {
         Criticality currentCriticality = newUnitOfWork.getCriticality();
@@ -148,6 +149,7 @@ public class DefaultUnitOfWorkManager implements UnitOfWorkManager {
           metricsTemplate.registerCriticalityChange(group, name, criticality);
         }
         newUnitOfWork.setCriticality(criticality);
+        context.putMdc("tw_criticality", criticality.name());
       }
 
       context.put(TW_CONTEXT_KEY, newUnitOfWork);
