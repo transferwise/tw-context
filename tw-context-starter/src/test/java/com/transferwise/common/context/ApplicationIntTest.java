@@ -79,10 +79,17 @@ public class ApplicationIntTest {
         .execute(() -> {
           assertThat(MDC.get(TwContext.MDC_KEY_EP_NAME)).isEqualTo(testName);
           assertThat(MDC.get(TwContext.MDC_KEY_EP_GROUP)).isEqualTo(testGroup);
+
+          assertThat(MDC.get("tw_criticality")).isEqualTo("CRITICAL_PLUS");
+          assertThat(MDC.get("tw_deadline")).isEqualTo(testClock.instant().toString());
         });
 
     assertThat(MDC.get(TwContext.MDC_KEY_EP_NAME)).isNull();
     assertThat(MDC.get(TwContext.MDC_KEY_EP_GROUP)).isNull();
+
+    assertThat(MDC.get("tw_criticality")).isNull();
+    assertThat(MDC.get("tw_deadline")).isNull();
+
   }
 
   @Test
