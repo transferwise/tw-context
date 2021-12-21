@@ -1,3 +1,9 @@
+pluginManagement {
+    repositories {
+        maven { url "https://arti.tw.ee/artifactory/libs-release" }
+    }
+}
+
 include "tw-context"
 include "tw-context-starter"
 include "tw-context-ownership-starter"
