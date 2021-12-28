@@ -2,6 +2,7 @@ package com.transferwise.common.context;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.RateLimiter;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +52,7 @@ public class TwContext {
     return interceptors.remove(interceptor);
   }
 
+  @SuppressFBWarnings(value="MS", justification = "Performance")
   public static List<TwContextExecutionInterceptor> getExecutionInterceptors() {
     return interceptors;
   }
@@ -63,6 +65,7 @@ public class TwContext {
     return attributeChangeListeners.remove(listener);
   }
 
+  @SuppressFBWarnings(value="MS", justification = "Performance")
   public static List<TwContextAttributeChangeListener> getAttributeChangeListeners() {
     return attributeChangeListeners;
   }
