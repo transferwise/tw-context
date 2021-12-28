@@ -52,7 +52,7 @@ public class TwContext {
     return interceptors.remove(interceptor);
   }
 
-  @SuppressFBWarnings(value="MS", justification = "Performance")
+  @SuppressFBWarnings(value = "MS", justification = "Performance")
   public static List<TwContextExecutionInterceptor> getExecutionInterceptors() {
     return interceptors;
   }
@@ -65,7 +65,7 @@ public class TwContext {
     return attributeChangeListeners.remove(listener);
   }
 
-  @SuppressFBWarnings(value="MS", justification = "Performance")
+  @SuppressFBWarnings(value = "MS", justification = "Performance")
   public static List<TwContextAttributeChangeListener> getAttributeChangeListeners() {
     return attributeChangeListeners;
   }
