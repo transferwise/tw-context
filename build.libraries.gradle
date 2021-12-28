@@ -6,7 +6,7 @@ ext {
             jsr250Api                       : 'javax.annotation:jsr250-api:1.0',
             newrelicApi                     : 'com.newrelic.agent.java:newrelic-api:6.5.0',
             spotbugsAnnotations             : "com.github.spotbugs:spotbugs-annotations:4.2.3",
-            springBootDependencies          : "org.springframework.boot:spring-boot-dependencies:2.3.11.RELEASE",
+            springBootDependencies          : "org.springframework.boot:spring-boot-dependencies:2.5.8",
             twBaseUtils                     : "com.transferwise.common:tw-base-utils:1.5.0",
 
             // versions managed by spring-boot-dependencies platform
