@@ -46,7 +46,6 @@ public enum TwTeam {
   PAYOUT_COORDINATOR("payout-coordinator"),
   PP_TRANSFER("pp-transfer"),
   PRICING("pricing"),
-  PROBLEM_FLOW("problem-flow"),
   PROFILE_SERVICE("profile-service"),
   QUOTE_SERVICE("quote-service"),
   RECEIVE("receive"),
