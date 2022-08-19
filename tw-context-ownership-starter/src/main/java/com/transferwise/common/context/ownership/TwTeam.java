@@ -20,7 +20,7 @@ public enum TwTeam {
   ANZ("anz"),
   ASIA_CURRENCIES("asia-currencies"),
   BANKING("banking"),
-  BUSINESS_CONVENIENCE_DEV("business-convenience-dev"),
+  BUSINESS_CONTROLS("business-controls"),
   BUSINESS_PAYOUTS("business-payouts"),
   CARDS("cards"),
   COMPARISON("comparison"),
