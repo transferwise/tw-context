@@ -21,7 +21,7 @@ public enum TwTeam {
   ASIA_CURRENCIES("asia-currencies"),
   BANKING("banking"),
   BUSINESS_CONTROLS("business-controls"),
-  BUSINESS_PAYOUTS("business-payouts"),
+  BUSINESS_SEND("business-send"),
   CARDS("cards"),
   COMPARISON("comparison"),
   CONNECTED_APPS("connected-apps"),
