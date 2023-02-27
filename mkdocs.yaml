@@ -1,0 +1,7 @@
+site_name: tw-context Documentation
+repo_url: https://github.com/transferwise/tw-context
+edit_uri: blob/master/docs/
+nav:
+  - Overview: index.md
+  - Usage: usage.md
+  - Contributing: contributing.md
