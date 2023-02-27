@@ -13,4 +13,4 @@ dependencies {
 }
 ```
 > Replace `<VERSION>` with the version of the library you want to use.
-> You can also use `tw-context-starter` which autoconfigures some Spring beans. Or `tw-context-ownership-starter`  if you want to automatically set the `TwContexts`'s `owner` attribute.
+> You can also use `tw-context-starter` which autoconfigures some Spring beans. Or `tw-context-ownership-starter` if you want to automatically set the `TwContexts`'s `owner` attribute.
