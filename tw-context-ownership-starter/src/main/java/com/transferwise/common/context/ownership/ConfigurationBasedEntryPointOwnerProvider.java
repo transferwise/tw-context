@@ -4,13 +4,13 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class ConfigurationBasedEntryPointOwnerProvider implements EntryPointOwnerProvider {
+public class ConfigurationBasedEntryPointOwnerProvider implements EntryPointOwnerProvider, InitializingBean {
 
   @Autowired
   @Setter
@@ -20,8 +20,7 @@ public class ConfigurationBasedEntryPointOwnerProvider implements EntryPointOwne
 
   private final Pattern componentsSeparatingRegex = Pattern.compile("(?:\\\\.|[^:\\\\]++)*");
 
-  @PostConstruct
-  public void init() {
+  public void afterPropertiesSet() {
     groupNameOwnerMap = properties.getEntryPointToOwnerMappings().stream().map(this::getParts)
         .collect(Collectors.groupingBy(this::getGroupPart, Collectors.toMap(this::getNamePart, this::getOwnerPart)));
   }

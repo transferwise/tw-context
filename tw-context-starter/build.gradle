@@ -6,7 +6,6 @@ apply from: '../build.common.gradle'
 
 dependencies {
     implementation libraries.springBootAutoconfigure
-    implementation libraries.newrelicApi
     implementation libraries.twBaseUtils
     api project(":tw-context:")
 

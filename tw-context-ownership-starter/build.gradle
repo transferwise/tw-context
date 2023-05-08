@@ -10,7 +10,6 @@ dependencies {
     implementation libraries.slf4jApi
     implementation libraries.commonsLang3
     implementation libraries.commonsText
-    implementation libraries.jsr250Api
 
     api project(":tw-context")
 

@@ -52,7 +52,7 @@ public class ConfigurationBasedEntryPointOwnerProviderTest {
   protected ConfigurationBasedEntryPointOwnerProvider createProvider(TwContextOwnershipProperties props) {
     ConfigurationBasedEntryPointOwnerProvider provider = new ConfigurationBasedEntryPointOwnerProvider();
     provider.setProperties(props);
-    provider.init();
+    provider.afterPropertiesSet();
     return provider;
   }
 }
