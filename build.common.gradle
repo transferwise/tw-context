@@ -7,8 +7,6 @@ ext.projectGitHubRepoName = "tw-context"
 ext.projectScmUrl = "https://github.com/transferwise/${projectGitHubRepoName}"
 ext.projectScmConnection = "scm:git:git://github.com/transferwise/${projectGitHubRepoName}.git"
 
-apply from: "../build.libraries.gradle"
-
 buildscript {
     repositories {
         mavenCentral()
@@ -23,6 +21,8 @@ apply plugin: "idea"
 apply plugin: "com.github.spotbugs"
 apply plugin: "signing"
 
+apply from: "../build.libraries.gradle"
+
 group = "com.transferwise.common"
 
 repositories {
@@ -30,18 +30,40 @@ repositories {
     mavenLocal()
 }
 
+configurations {
+    local {
+        canBeResolved(false)
+        canBeConsumed(false)
+    }
+    compileClasspath {
+        extendsFrom(local)
+    }
+    runtimeClasspath {
+        extendsFrom(local)
+    }
+    testCompileClasspath {
+        extendsFrom(local)
+    }
+    testRuntimeClasspath {
+        extendsFrom(local)
+    }
+    annotationProcessor {
+        extendsFrom(local)
+    }
+    testAnnotationProcessor {
+        extendsFrom(local)
+    }
+}
+
 dependencies {
-    annotationProcessor(platform(libraries.springBootDependencies))
-    testAnnotationProcessor(platform(libraries.springBootDependencies))
-    compileOnly(platform(libraries.springBootDependencies))
-    implementation(platform(libraries.springBootDependencies))
-    testImplementation(platform(libraries.springBootDependencies))
+    local(platform(libraries.springBootDependencies))
 
     annotationProcessor(libraries.lombok)
     annotationProcessor(libraries.springBootConfigurationProcessor)
 
     compileOnly(libraries.lombok)
     compileOnly(libraries.springBootConfigurationProcessor)
+    compileOnly libraries.spotbugsAnnotations
 
     testAnnotationProcessor(libraries.lombok)
     testImplementation(libraries.lombok)
@@ -51,8 +73,14 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    if (springBootVersion.startsWith("3.")) {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    else{
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
     withSourcesJar()
     withJavadocJar()
 }
@@ -74,10 +102,10 @@ compileJava {
 }
 
 compileTestJava {
-    sourceCompatibility = JavaVersion.VERSION_15
-    targetCompatibility = JavaVersion.VERSION_15
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(15)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -87,6 +115,19 @@ publishing {
             from components.java
             afterEvaluate {
                 artifactId = projectArtifactName
+            }
+
+            /*
+             This ensures that libraries will have explicit dependency versions in their Maven POM and Gradle module files, so that there would be less
+             ambiguity and less chances of dependency conflicts.
+            */
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionOf('runtimeClasspath')
+                }
             }
 
             pom {
@@ -114,6 +155,11 @@ publishing {
                     developerConnection = projectScmConnection
                     url = projectScmUrl
                 }
+                withXml {
+                    if (!asNode().dependencyManagement.isEmpty()){
+                        throw new IllegalStateException("There should not be any `dependencyManagement` block in POM.")
+                    }
+                }
             }
         }
     }
@@ -138,7 +184,7 @@ publishing {
 
 test {
     javaLauncher = javaToolchains.launcherFor {
-        languageVersion = JavaLanguageVersion.of(15)
+        languageVersion = JavaLanguageVersion.of(17)
     }
     useJUnitPlatform()
     testLogging {

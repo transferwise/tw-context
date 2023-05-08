@@ -1,7 +1,5 @@
 package com.transferwise.common.context;
 
-import com.newrelic.api.agent.NewRelic;
-import com.newrelic.api.agent.Trace;
 import com.transferwise.common.baseutils.meters.cache.IMeterCache;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,13 +36,9 @@ public class TwContextUniqueEntryPointsLimitingInterceptor implements TwContextE
   }
 
   @Override
-  // We will start newrelic trace here, instead of a separate interceptor, to save stacktrace lines.
-  @Trace(dispatcher = true)
   public <T> T intercept(TwContext context, Supplier<T> supplier) {
     String group = context.getGroup();
     String name = context.getName();
-
-    NewRelic.setTransactionName(group, name);
 
     Pair<String, String> key = Pair.of(group, name);
 
