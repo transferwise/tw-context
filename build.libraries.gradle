@@ -4,7 +4,7 @@ ext {
     libraries = [
             // version defined
             commonsText                     : 'org.apache.commons:commons-text:1.10.0',
-            guava                           : 'com.google.guava:guava:31.1-jre',
+            guava                           : 'com.google.guava:guava:32.1.2-jre',
             springBootDependencies          : "org.springframework.boot:spring-boot-dependencies:${springBootVersion}",
             twBaseUtils                     : "com.transferwise.common:tw-base-utils:1.9.0",
 
