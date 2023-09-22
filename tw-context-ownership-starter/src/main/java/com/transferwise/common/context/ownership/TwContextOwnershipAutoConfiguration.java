@@ -18,7 +18,7 @@ public class TwContextOwnershipAutoConfiguration {
   }
 
   @Bean
-  public TwContextAttributePutListener twContextOwnershipAttributesChangeListener() {
+  public TwContextAttributePutListener twContextOwnershipAttributesPutListener() {
     EntryPointOwnerAttributesPutListener listener = new EntryPointOwnerAttributesPutListener();
     TwContext.addAttributePutListener(listener);
     return listener;
