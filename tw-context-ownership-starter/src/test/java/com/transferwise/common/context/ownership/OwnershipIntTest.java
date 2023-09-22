@@ -17,7 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class OwnershipIntTest {
 
   @Autowired
-  private EntryPointOwnerAttributesChangeListener entryPointOwnerAttributesChangeListener;
+  private EntryPointOwnerAttributesPutListener entryPointOwnerAttributesPutListener;
 
   @Test
   public void ownerShipIsMappedByConfiguration() {
@@ -33,11 +33,11 @@ public class OwnershipIntTest {
 
   @Test
   void entrypointsWithoutOwnerShouldBeLoggedOnce() {
-    entryPointOwnerAttributesChangeListener.clearDefaultOwners();
+    entryPointOwnerAttributesPutListener.clearDefaultOwners();
 
     TwContext twContext = TwContext.current().createSubContext().asEntryPoint("Jobs", "testJob1");
 
-    Logger logger = (Logger) LoggerFactory.getLogger(EntryPointOwnerAttributesChangeListener.class);
+    Logger logger = (Logger) LoggerFactory.getLogger(EntryPointOwnerAttributesPutListener.class);
     ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
     listAppender.start();
     logger.addAppender(listAppender);
