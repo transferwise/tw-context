@@ -1,7 +1,7 @@
 package com.transferwise.common.context.ownership;
 
 import com.transferwise.common.context.TwContext;
-import com.transferwise.common.context.TwContextAttributeChangeListener;
+import com.transferwise.common.context.TwContextAttributePutListener;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -18,9 +18,9 @@ public class TwContextOwnershipAutoConfiguration {
   }
 
   @Bean
-  public TwContextAttributeChangeListener twContextOwnershipAttributesChangeListener() {
-    EntryPointOwnerAttributesChangeListener listener = new EntryPointOwnerAttributesChangeListener();
-    TwContext.addAttributeChangeListener(listener);
+  public TwContextAttributePutListener twContextOwnershipAttributesChangeListener() {
+    EntryPointOwnerAttributesPutListener listener = new EntryPointOwnerAttributesPutListener();
+    TwContext.addAttributePutListener(listener);
     return listener;
   }
 

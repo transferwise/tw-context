@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2023-09-22
+
+### Changed
+* When using `twContext.put()` it now always stores the new value to attributes. It no longer checks if old value is not equal to the new one.
+  This is needed to support use cases where the objects might be equal (like an empty map), but we want to create a new separate object anyway in the sub contexts.
+* As a result also change the `TwContextAttributeChangeListener` to `TwContextAttributePutListener`.
+  `TwContextAttributePutListener` is now always called when the `twContext.put()` is called regardless if the value changed or not. This also enables wider use of the interface.
+
 ## [0.12.2] - 2023-08-03
 
 ### Bumped

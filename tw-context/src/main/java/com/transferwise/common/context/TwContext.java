@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
@@ -35,7 +34,7 @@ public class TwContext {
 
   private static final ThreadLocal<Optional<TwContext>> contextTl = new ThreadLocal<>();
   private static final List<TwContextExecutionInterceptor> interceptors = new CopyOnWriteArrayList<>();
-  private static final List<TwContextAttributeChangeListener> attributeChangeListeners = new CopyOnWriteArrayList<>();
+  private static final List<TwContextAttributePutListener> attributePutListeners = new CopyOnWriteArrayList<>();
   private static final TwContext ROOT_CONTEXT = new TwContext(null, true);
   private static final RateLimiter throwableLoggingRateLimiter = RateLimiter.create(2);
 
@@ -57,17 +56,17 @@ public class TwContext {
     return interceptors;
   }
 
-  public static void addAttributeChangeListener(@NonNull TwContextAttributeChangeListener listener) {
-    attributeChangeListeners.add(listener);
+  public static void addAttributePutListener(@NonNull TwContextAttributePutListener listener) {
+    attributePutListeners.add(listener);
   }
 
-  public static boolean removeAttributeChangeListener(TwContextAttributeChangeListener listener) {
-    return attributeChangeListeners.remove(listener);
+  public static boolean removeAttributePutListener(TwContextAttributePutListener listener) {
+    return attributePutListeners.remove(listener);
   }
 
   @SuppressFBWarnings(value = "MS", justification = "Performance")
-  public static List<TwContextAttributeChangeListener> getAttributeChangeListeners() {
-    return attributeChangeListeners;
+  public static List<TwContextAttributePutListener> getAttributePutListeners() {
+    return attributePutListeners;
   }
 
   public static void putCurrentMdc(@NonNull String key, String value) {
@@ -204,16 +203,15 @@ public class TwContext {
     }
     Object oldValue = attributes.get(key);
 
-    if (!Objects.equals(oldValue, newValue)) {
-      if (newValue == null) {
-        attributes.remove(key);
-        newAttributes.remove(key);
-      } else {
-        attributes.put(key, newValue);
-        newAttributes.put(key, newValue);
-      }
-      fireAttributeChangeEvent(key, oldValue, newValue);
+    if (newValue == null) {
+      attributes.remove(key);
+      newAttributes.remove(key);
+    } else {
+      attributes.put(key, newValue);
+      newAttributes.put(key, newValue);
     }
+
+    fireAttributePutEvent(key, oldValue, newValue);
 
     return this;
   }
@@ -306,15 +304,15 @@ public class TwContext {
     return supplier.get();
   }
 
-  private void fireAttributeChangeEvent(String key, Object oldValue, Object newValue) {
-    if (attributeChangeListeners != null) {
+  private void fireAttributePutEvent(String key, Object oldValue, Object newValue) {
+    if (attributePutListeners != null) {
       try {
-        attributeChangeListeners.forEach((l) -> l.attributeChanged(this, key, oldValue, newValue));
+        attributePutListeners.forEach((l) -> l.attributePut(this, key, oldValue, newValue));
       } catch (Throwable t) {
         // This is just a safety net, every listener needs to be bullet-proof by themselves.
         if (throwableLoggingRateLimiter.tryAcquire()) {
           // Don't log value, could be PII.
-          log.error("Attribute change listener failed for key '" + key + "'.", t);
+          log.error("Attribute put listener failed for key '" + key + "'.", t);
         }
       }
     }

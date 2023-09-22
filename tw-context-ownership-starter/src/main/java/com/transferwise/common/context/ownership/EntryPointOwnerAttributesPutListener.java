@@ -1,9 +1,10 @@
 package com.transferwise.common.context.ownership;
 
 import com.transferwise.common.context.TwContext;
-import com.transferwise.common.context.TwContextAttributeChangeListener;
+import com.transferwise.common.context.TwContextAttributePutListener;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
-public class EntryPointOwnerAttributesChangeListener implements TwContextAttributeChangeListener {
+public class EntryPointOwnerAttributesPutListener implements TwContextAttributePutListener {
 
   @Autowired
   private EntryPointOwnerProviderRegistry entryPointOwnerProviderRegistry;
@@ -31,7 +32,10 @@ public class EntryPointOwnerAttributesChangeListener implements TwContextAttribu
   private final Lock defaultOwnersLock = new ReentrantLock();
 
   @Override
-  public void attributeChanged(TwContext context, String key, Object oldValue, Object newValue) {
+  public void attributePut(TwContext context, String key, Object oldValue, Object newValue) {
+    if (Objects.equals(oldValue, newValue)) {
+      return;
+    }
     if (TwContext.NAME_KEY.equals(key)) {
       String epGroup = context.getGroup();
       String epName = context.getName();

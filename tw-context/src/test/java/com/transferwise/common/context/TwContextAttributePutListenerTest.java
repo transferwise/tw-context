@@ -6,13 +6,13 @@ import org.apache.commons.lang3.mutable.MutableObject;
 import org.junit.jupiter.api.Test;
 import org.slf4j.MDC;
 
-public class TwContextAttributeChangeListenerTest {
+public class TwContextAttributePutListenerTest {
 
   @Test
   void nameAttributeIsChangedAfterGroupAttribute() {
     MutableObject<Boolean> groupChanged = new MutableObject<>(false);
     MutableObject<Boolean> nameChanged = new MutableObject<>(false);
-    TwContextAttributeChangeListener listener = (context, key, oldValue, newValue) -> {
+    TwContextAttributePutListener listener = (context, key, oldValue, newValue) -> {
       if (TwContext.GROUP_KEY.equals(key)) {
         groupChanged.setValue(true);
       } else if (TwContext.NAME_KEY.equals(key)) {
@@ -22,20 +22,20 @@ public class TwContextAttributeChangeListenerTest {
         nameChanged.setValue(true);
       }
     };
-    TwContext.addAttributeChangeListener(listener);
+    TwContext.addAttributePutListener(listener);
     try {
       TwContext.current().createSubContext().asEntryPoint("SRE", "Task123");
 
       assertThat(nameChanged.getValue()).isTrue();
       assertThat(groupChanged.getValue()).isTrue();
     } finally {
-      TwContext.removeAttributeChangeListener(listener);
+      TwContext.removeAttributePutListener(listener);
     }
   }
 
   @Test
   void ownerCanBeSetWhenNameIsChanged() {
-    TwContextAttributeChangeListener listener = (context, key, oldValue, newValue) -> {
+    TwContextAttributePutListener listener = (context, key, oldValue, newValue) -> {
       // Here we are making an assumption (covered by test in TwContext), that the name key is always changed after group key.
       // We could remove that assumption by deciding owner both on group key change and on name key change, but that would incur double work.
       if (TwContext.NAME_KEY.equals(key)) {
@@ -47,7 +47,7 @@ public class TwContextAttributeChangeListenerTest {
       }
     };
 
-    TwContext.addAttributeChangeListener(listener);
+    TwContext.addAttributePutListener(listener);
     try {
       TwContext twContext = TwContext.current().createSubContext().asEntryPoint("Test", "/ep1");
       assertThat(twContext.getOwner()).isEqualTo("Kristo");
@@ -59,7 +59,7 @@ public class TwContextAttributeChangeListenerTest {
         assertThat(MDC.get(TwContext.MDC_KEY_EP_OWNER)).isEqualTo("Yurii");
       });
     } finally {
-      TwContext.removeAttributeChangeListener(listener);
+      TwContext.removeAttributePutListener(listener);
     }
   }
 }
