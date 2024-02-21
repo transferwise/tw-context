@@ -85,6 +85,10 @@ java {
     withJavadocJar()
 }
 
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs.add("-parameters")
+}
+
 jar {
     manifest {
         attributes(
