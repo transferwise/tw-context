@@ -9,6 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 * - Added support for Spring Boot 3.2.
+    - Updated dependencies.
 
 ## [1.0.0] - 2023-09-22
 
