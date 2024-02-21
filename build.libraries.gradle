@@ -4,9 +4,9 @@ ext {
     libraries = [
             // version defined
             commonsText                     : 'org.apache.commons:commons-text:1.10.0',
-            guava                           : 'com.google.guava:guava:32.1.2-jre',
+            guava                           : 'com.google.guava:guava:33.0.0-jre',
             springBootDependencies          : "org.springframework.boot:spring-boot-dependencies:${springBootVersion}",
-            twBaseUtils                     : "com.transferwise.common:tw-base-utils:1.9.0",
+            twBaseUtils                     : "com.transferwise.common:tw-base-utils:1.12.3",
 
             // versions managed by spring-boot-dependencies platform
             assertjCore                     : 'org.assertj:assertj-core',
