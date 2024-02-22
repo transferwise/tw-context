@@ -18,10 +18,10 @@ jobs:
       max-parallel: 100
       matrix:
         spring_boot_version:
+          - 3.2.2
           - 3.1.2
           - 3.0.9
           - 2.7.14
-          - 2.6.15
     container:
       image: azul/zulu-openjdk:17
     env:
