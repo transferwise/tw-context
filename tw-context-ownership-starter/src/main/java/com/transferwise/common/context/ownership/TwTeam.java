@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
  * <p>Functionality can be expanded later, for example for services needing a team's slack channel for automatic notifications.
  */
 public enum TwTeam {
-  ACCOUNT_DETAILS_SERVICE("account-details-service"),
   ACTIVITY_TEAM("activity-team"),
   AML("aml"),
   ANZ("anz"),
@@ -25,6 +24,7 @@ public enum TwTeam {
   CARDS("cards"),
   COMPARISON("comparison"),
   CONNECTED_APPS("connected-apps"),
+  CONTACTS("contacts"),
   CONVERSION("conversion"),
   CURRENCIES("currencies"),
   CURRENCIES_PLATFORM("currencies-platform"),
