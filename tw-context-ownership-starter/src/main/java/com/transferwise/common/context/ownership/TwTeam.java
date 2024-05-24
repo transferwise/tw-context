@@ -53,7 +53,6 @@ public enum TwTeam {
   SECURITY("security"),
   SEND_MONEY("send-money"),
   SMB("smb"),
-  SPEED("speed"),
   TREASURY("treasury"),
   USD("usd"),
   VERIFICATION("verification"),
