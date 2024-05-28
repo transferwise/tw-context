@@ -47,7 +47,7 @@ public enum TwTeam {
   PP_TRANSFER("pp-transfer"),
   PRICING("pricing"),
   PROFILE_SERVICE("profile-service"),
-  QUOTE_SERVICE("quote-service"),
+  SEND_CORE("send-core"),
   RECEIVE("receive"),
   SECURITY_PRODUCT("security-product"),
   SECURITY("security"),
