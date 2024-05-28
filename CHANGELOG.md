@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2024-05-28
+
+### Changed
+* `TwTeam.ACCOUNT_DETAILS_SERVICE` to `TwTeam.CONTACTS` - the formation and ownership of team has changed in the process, refer to CODEOWNERS in GitHub for respective services.
+* `TwTeam.QUOTE_SERVICE` to `TwTeam.SEND_CORE`, to unify team's ownership under its former and current team names.
+
+### Removed
+* `TwTeam.SPEED` - the team no longer exists, CODEOWNERS files for the services it used to own would reflect where they now belong.
+
 ## [1.0.1] - 2024-02-21
 
 ### Changed
