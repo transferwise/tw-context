@@ -5,10 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.1.0] - 2024-05-28
+## [2.1.0] - 2024-11-08
 
 ### Changed
 * Added ThreadLocalAccessor for TwContext so it can be available for libraries using micrometer context propagation API
+
+## [2.0.1] - 2024-07-16
+
+### Changed
+* Added support for Spring Boot 3.3.
 
 ## [2.0.0] - 2024-05-28
 
@@ -22,8 +27,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## [1.0.1] - 2024-02-21
 
 ### Changed
-* - Added support for Spring Boot 3.2.
-    - Updated dependencies.
+* Added support for Spring Boot 3.2.
+  * Updated dependencies.
 
 ## [1.0.0] - 2023-09-22
 
