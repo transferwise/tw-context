@@ -10,6 +10,7 @@ dependencies {
     implementation libraries.slf4jApi
     implementation libraries.guava
     implementation libraries.twBaseUtils
+    implementation libraries.micrometerContextPropagation
 
     api libraries.micrometerCore
 }

@@ -12,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.annotation.Nonnull;
+import io.micrometer.context.ContextRegistry;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +36,13 @@ public class TwContext {
   private static final ThreadLocal<Optional<TwContext>> contextTl = new ThreadLocal<>();
   private static final List<TwContextExecutionInterceptor> interceptors = new CopyOnWriteArrayList<>();
   private static final List<TwContextAttributePutListener> attributePutListeners = new CopyOnWriteArrayList<>();
-  private static final TwContext ROOT_CONTEXT = new TwContext(null, true);
   private static final RateLimiter throwableLoggingRateLimiter = RateLimiter.create(2);
+
+  static final TwContext ROOT_CONTEXT = new TwContext(null, true);
+
+  static {
+    ContextRegistry.getInstance().registerThreadLocalAccessor(new TwContextThreadLocalAccessor());
+  }
 
   public static TwContext current() {
     Optional<TwContext> twContext = contextTl.get();
