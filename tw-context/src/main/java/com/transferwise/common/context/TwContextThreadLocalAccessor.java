@@ -1,8 +1,8 @@
 package com.transferwise.common.context;
 
-import io.micrometer.context.ThreadLocalAccessor;
-
 import static com.transferwise.common.context.UnitOfWork.TW_CONTEXT_KEY;
+
+import io.micrometer.context.ThreadLocalAccessor;
 
 public class TwContextThreadLocalAccessor implements ThreadLocalAccessor<TwContext> {
 
