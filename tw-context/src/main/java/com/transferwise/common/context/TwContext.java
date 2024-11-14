@@ -35,8 +35,9 @@ public class TwContext {
   private static final ThreadLocal<Optional<TwContext>> contextTl = new ThreadLocal<>();
   private static final List<TwContextExecutionInterceptor> interceptors = new CopyOnWriteArrayList<>();
   private static final List<TwContextAttributePutListener> attributePutListeners = new CopyOnWriteArrayList<>();
-  private static final TwContext ROOT_CONTEXT = new TwContext(null, true);
   private static final RateLimiter throwableLoggingRateLimiter = RateLimiter.create(2);
+
+  static final TwContext ROOT_CONTEXT = new TwContext(null, true);
 
   public static TwContext current() {
     Optional<TwContext> twContext = contextTl.get();

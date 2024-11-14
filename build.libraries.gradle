@@ -7,6 +7,7 @@ ext {
             guava                           : 'com.google.guava:guava:33.0.0-jre',
             springBootDependencies          : "org.springframework.boot:spring-boot-dependencies:${springBootVersion}",
             twBaseUtils                     : "com.transferwise.common:tw-base-utils:1.12.3",
+            micrometerContextPropagation    : "io.micrometer:context-propagation:1.1.2",
 
             // versions managed by spring-boot-dependencies platform
             assertjCore                     : 'org.assertj:assertj-core',

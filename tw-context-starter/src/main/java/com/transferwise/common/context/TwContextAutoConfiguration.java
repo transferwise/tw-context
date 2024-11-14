@@ -2,6 +2,7 @@ package com.transferwise.common.context;
 
 import com.transferwise.common.baseutils.meters.cache.IMeterCache;
 import com.transferwise.common.baseutils.meters.cache.MeterCache;
+import io.micrometer.context.ContextRegistry;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -11,6 +12,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class TwContextAutoConfiguration {
+
+  TwContextAutoConfiguration() {
+    ContextRegistry.getInstance().registerThreadLocalAccessor(new TwContextThreadLocalAccessor());
+  }
 
   @Bean
   @ConditionalOnMissingBean
