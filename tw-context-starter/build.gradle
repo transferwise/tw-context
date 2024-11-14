@@ -7,6 +7,7 @@ apply from: '../build.common.gradle'
 dependencies {
     implementation libraries.springBootAutoconfigure
     implementation libraries.twBaseUtils
+    implementation libraries.micrometerContextPropagation
     api project(":tw-context:")
 
     testImplementation libraries.springBootStarterTest

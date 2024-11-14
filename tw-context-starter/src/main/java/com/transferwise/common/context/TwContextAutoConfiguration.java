@@ -12,6 +12,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TwContextAutoConfiguration {
 
+  TwContextAutoConfiguration() {
+    ContextRegistry.getInstance().registerThreadLocalAccessor(new TwContextThreadLocalAccessor());
+  }
+
   @Bean
   @ConditionalOnMissingBean
   public UnitOfWorkManager twContextUnitOfWorkManager(IMeterCache meterCache) {

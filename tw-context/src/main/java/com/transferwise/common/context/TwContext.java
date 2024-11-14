@@ -3,7 +3,6 @@ package com.transferwise.common.context;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.RateLimiter;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.micrometer.context.ContextRegistry;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -39,10 +38,6 @@ public class TwContext {
   private static final RateLimiter throwableLoggingRateLimiter = RateLimiter.create(2);
 
   static final TwContext ROOT_CONTEXT = new TwContext(null, true);
-
-  static {
-    ContextRegistry.getInstance().registerThreadLocalAccessor(new TwContextThreadLocalAccessor());
-  }
 
   public static TwContext current() {
     Optional<TwContext> twContext = contextTl.get();
