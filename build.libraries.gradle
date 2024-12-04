@@ -1,5 +1,5 @@
 ext {
-    springBootVersion = "${System.getenv("SPRING_BOOT_VERSION") ?: '3.2.2'}"
+    springBootVersion = "${System.getenv("SPRING_BOOT_VERSION") ?: '3.4.0'}"
 
     libraries = [
             // version defined
