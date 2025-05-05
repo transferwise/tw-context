@@ -130,6 +130,8 @@ public class ApplicationIntTest {
     assertThat(new DeadlineExceededException(deadline).getMessage()).isEqualTo("Deadline exceeded 3 seconds 1 milliseconds ago.");
     assertThat(new DeadlineExceededException(deadline, start).getMessage())
         .isEqualTo("Deadline exceeded 3 seconds 1 milliseconds ago. Time taken in current unit of work was 5 seconds.");
+    assertThat(new DeadlineExceededException(deadline, start).getSinceDeadlineExceededMillis() == 3001).isTrue();
+    assertThat(new DeadlineExceededException(deadline, start).getDurationMillis() == 5000).isTrue();
 
     testClock.set(start);
     assertThatThrownBy(() -> unitOfWorkManager.createUnitOfWork().deadline(deadline).toContext().execute(() -> {
