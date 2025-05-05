@@ -9,8 +9,12 @@ public class DeadlineExceededException extends RuntimeException {
 
   static final long serialVersionUID = 1L;
 
-  private final long sinceDeadlineExceededMillis;
-  private final long durationMillis;
+  private long sinceDeadlineExceededMillis;
+  private long durationMillis;
+
+  public DeadlineExceededException(String message) {
+    super(message);
+  }
 
   public DeadlineExceededException(Instant deadline) {
     this(deadline, null);
