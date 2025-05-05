@@ -1,8 +1,8 @@
 package com.transferwise.common.context;
 
-import lombok.Data;
 import java.time.Duration;
 import java.time.Instant;
+import lombok.Data;
 
 @Data
 public class DeadlineExceededException extends RuntimeException {
