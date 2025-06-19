@@ -70,6 +70,7 @@ dependencies {
     testImplementation(libraries.logbackClassic)
     testImplementation(libraries.junitJupiter)
     testImplementation(libraries.assertjCore)
+    testRuntimeOnly(libraries.junitPlatformLauncher)
 }
 
 java {
