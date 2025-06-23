@@ -12,6 +12,7 @@ ext {
             assertjCore                     : 'org.assertj:assertj-core',
             commonsLang3                    : 'org.apache.commons:commons-lang3',
             junitJupiter                    : 'org.junit.jupiter:junit-jupiter',
+            junitPlatformLauncher           : 'org.junit.platform:junit-platform-launcher',
             logbackClassic                  : 'ch.qos.logback:logback-classic',
             lombok                          : 'org.projectlombok:lombok',
             micrometerCore                  : 'io.micrometer:micrometer-core',
