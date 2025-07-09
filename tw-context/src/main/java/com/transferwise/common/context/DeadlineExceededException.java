@@ -2,9 +2,9 @@ package com.transferwise.common.context;
 
 import java.time.Duration;
 import java.time.Instant;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class DeadlineExceededException extends RuntimeException {
 
   static final long serialVersionUID = 1L;
