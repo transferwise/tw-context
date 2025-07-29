@@ -40,7 +40,6 @@ group = "com.transferwise.common"
 nexusPublishing {
     repositories {
         sonatype {
-            nexusUrl.set(uri(System.getenv("MAVEN_URL")))
             username = System.getenv("SONATYPE_USER")
             password = System.getenv("SONATYPE_PASSWORD")
         }
